@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dilema da Humanidade — Terra ou Espaço?</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== Tokens ===== */
+:root{
+  --earth:#2ecc71; --earth-2:#0e7c86; --earth-dark:#06281c;
+  --space:#a855f7; --space-2:#22d3ee; --space-dark:#07041a;
+  --bg:#05060f; --text:#eaf0f7; --muted:#9aa7b8; --card:rgba(255,255,255,.05);
+  --font-title:'Orbitron','Segoe UI',system-ui,sans-serif;
+  --font-body:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-behavior:smooth; scroll-padding-top:calc(76px + env(safe-area-inset-top,0px));}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;overflow-x:hidden}
+h1,h2,h3{font-family:var(--font-title);margin:0;line-height:1.15}
+section{padding:80px 6vw;max-width:1200px;margin:0 auto}
+.sec-title{font-size:clamp(1.5rem,4vw,2.3rem);text-align:center;margin-bottom:12px}
+.sec-sub{text-align:center;color:var(--muted);max-width:640px;margin:0 auto 40px}
+
+/* ===== Header ===== */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;display:flex;justify-content:space-between;align-items:center;
+  padding:14px 6vw;background:rgba(5,6,15,.78);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:rgba(5,6,15,.9);z-index:60}
+.logo{font-family:var(--font-title);font-weight:900;font-size:1.05rem;letter-spacing:1px;
+  background:linear-gradient(90deg,var(--earth),var(--space-2),var(--space));-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav a{color:var(--text);text-decoration:none;font-size:.85rem;padding:8px 12px;border-radius:99px;transition:.25s}
+nav a:hover{background:rgba(255,255,255,.1);box-shadow:0 0 14px rgba(34,211,238,.35)}
+
+/* ===== Hero split ===== */
+.hero{position:relative;display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 62px);max-width:none;padding:0}
+.side{position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:6vw 5vw 9vh;overflow:hidden;transition:flex .4s, filter .4s}
+.side h2{font-size:clamp(1.3rem,3vw,2rem);margin-bottom:10px}
+.side p{max-width:380px;color:#d3dde8;margin:0 0 14px}
+.side ul{list-style:none;padding:0;margin:0;display:flex;gap:8px;flex-wrap:wrap}
+.side li{font-size:.78rem;padding:5px 12px;border-radius:99px;border:1px solid currentColor}
+.hero-earth{background:
+  radial-gradient(circle at 25% 20%,rgba(46,204,113,.45),transparent 55%),
+  radial-gradient(circle at 70% 85%,rgba(14,124,134,.6),transparent 60%),
+  linear-gradient(160deg,#0b3d2e,#0e6b6f 55%,#4a3520);color:var(--earth)}
+.hero-earth h2{color:#b9f5d0;text-shadow:0 0 18px rgba(46,204,113,.6)}
+.hero-space{background:
+  radial-gradient(circle at 75% 25%,rgba(168,85,247,.55),transparent 55%),
+  radial-gradient(circle at 20% 80%,rgba(34,211,238,.3),transparent 55%),
+  linear-gradient(200deg,#120533,#07041a 60%,#000);color:var(--space-2)}
+.hero-space h2{color:#e3c8ff;text-shadow:0 0 18px rgba(168,85,247,.8)}
+.hero-space::before{content:"";position:absolute;inset:0;opacity:.8;
+  background-image:radial-gradient(1.5px 1.5px at 20px 30px,#fff,transparent),radial-gradient(1px 1px at 90px 120px,#fff,transparent),
+  radial-gradient(1.5px 1.5px at 160px 60px,#c9a8ff,transparent),radial-gradient(1px 1px at 230px 170px,#9ff,transparent);
+  background-size:260px 200px;animation:twinkle 4s infinite alternate}
+@keyframes twinkle{to{opacity:.35}}
+.side > *{position:relative}
+.planet{position:absolute!important;right:-70px;top:12%;width:230px;height:230px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#ff9a6b,#c2410c 55%,#431407);box-shadow:0 0 60px rgba(255,120,60,.5);animation:float 7s ease-in-out infinite}
+.leaf{position:absolute!important;left:-60px;top:12%;width:230px;height:230px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#7ee8a8,#0e7c86 55%,#06281c);box-shadow:0 0 60px rgba(46,204,113,.5);animation:float 8s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-16px)}}
+.side:hover{filter:brightness(1.15)}
+.hero-center{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:5;text-align:center;width:min(640px,88vw);
+  padding:28px 22px;background:rgba(5,6,15,.62);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18);border-radius:22px;box-shadow:0 0 40px rgba(0,0,0,.5)}
+.hero-center h1{font-size:clamp(1.4rem,4vw,2.6rem);margin-bottom:12px}
+.hero-center p{margin:0 0 18px;color:var(--muted)}
+.vs{font-family:var(--font-title);color:#fff;text-shadow:0 0 16px var(--space-2)}
+.cta{display:inline-block;padding:13px 28px;border-radius:99px;font-weight:600;color:#fff;text-decoration:none;
+  background:linear-gradient(90deg,var(--earth-2),var(--space));transition:.3s;box-shadow:0 0 18px rgba(168,85,247,.5)}
+.cta:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 0 32px rgba(34,211,238,.7)}
+
+/* ===== Votação ===== */
+.vote-q{font-size:clamp(1.2rem,3vw,1.7rem);text-align:center;max-width:760px;margin:0 auto 34px}
+.vote-btns{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.vote-btn{border:2px solid transparent;border-radius:24px;padding:42px 20px;color:#fff;cursor:pointer;font-family:var(--font-title);
+  font-size:clamp(1rem,2.4vw,1.4rem);display:flex;flex-direction:column;align-items:center;gap:12px;transition:transform .3s,box-shadow .3s,opacity .3s}
+.vote-btn .emoji{font-size:3.2rem;transition:transform .4s}
+.vote-btn:hover:not(:disabled){transform:translateY(-6px) scale(1.03)}
+.vote-btn:hover:not(:disabled) .emoji{transform:scale(1.25) rotate(-8deg)}
+.vote-btn:disabled{cursor:default;opacity:.5}
+.vote-btn.chosen{opacity:1;animation:pop .6s}
+.btn-earth{background:linear-gradient(145deg,#0b5d3e,#0e7c86);border-color:var(--earth);box-shadow:0 0 22px rgba(46,204,113,.35)}
+.btn-earth:hover:not(:disabled){box-shadow:0 0 40px rgba(46,204,113,.8)}
+.btn-space{background:linear-gradient(145deg,#2a0a5e,#4c1d95);border-color:var(--space);box-shadow:0 0 22px rgba(168,85,247,.4)}
+.btn-space:hover:not(:disabled){box-shadow:0 0 40px rgba(168,85,247,.9)}
+@keyframes pop{40%{transform:scale(1.08)}}
+.thanks{text-align:center;margin-top:18px;min-height:1.6em;color:var(--space-2)}
+
+/* ===== Resultados ===== */
+.results{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:30px;max-width:820px;margin:0 auto}
+.bar{display:flex;height:46px;border-radius:99px;overflow:hidden;background:#111;margin:18px 0}
+.bar > div{display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.bar-earth{background:linear-gradient(90deg,var(--earth-2),var(--earth));color:#032015;width:50%}
+.bar-space{background:linear-gradient(90deg,var(--space),#6d28d9);width:50%}
+.legend{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted);flex-wrap:wrap;gap:6px}
+.total{text-align:center;font-family:var(--font-title);font-size:1.3rem;margin-top:14px}
+.locked{text-align:center;color:var(--muted)}
+.hidden{display:none!important}
+
+/* ===== Argumentos ===== */
+.args{max-width:none;padding:80px 6vw}
+.args.earth{background:linear-gradient(180deg,var(--bg),#07241b 50%,var(--bg))}
+.args.space{background:linear-gradient(180deg,var(--bg),#10062b 50%,var(--bg))}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;max-width:1100px;margin:0 auto}
+.card{padding:28px;border-radius:20px;background:var(--card);border:1px solid rgba(255,255,255,.1);transition:transform .3s,box-shadow .3s,border-color .3s}
+.card .ic{font-size:2.2rem;margin-bottom:8px}
+.card h3{font-size:1.05rem;margin-bottom:8px}
+.card p{margin:0;color:var(--muted);font-size:.95rem}
+.earth .card:hover{transform:translateY(-8px);border-color:var(--earth);box-shadow:0 0 28px rgba(46,204,113,.4)}
+.space .card:hover{transform:translateY(-8px);border-color:var(--space);box-shadow:0 0 28px rgba(168,85,247,.5)}
+.earth .sec-title{color:#b9f5d0}.space .sec-title{color:#e3c8ff}
+
+/* ===== Comentários ===== */
+.form{display:grid;gap:12px;max-width:720px;margin:0 auto 26px}
+.form input,.form textarea,.form select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);color:var(--text);font:inherit}
+.form select option{color:#111}
+.form input:focus,.form textarea:focus,.form select:focus{outline:none;border-color:var(--space-2);box-shadow:0 0 14px rgba(34,211,238,.4)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.filters{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.chip{padding:8px 18px;border-radius:99px;border:1px solid rgba(255,255,255,.2);background:none;color:var(--text);cursor:pointer;font:inherit;transition:.25s}
+.chip:hover,.chip.on{background:rgba(255,255,255,.14);box-shadow:0 0 14px rgba(34,211,238,.4)}
+.comments{display:grid;gap:14px;max-width:720px;margin:0 auto}
+.comment{padding:16px 18px;border-radius:16px;background:var(--card);border-left:4px solid;animation:slide .5s}
+.comment.t{border-color:var(--earth)}.comment.s{border-color:var(--space)}
+.comment .meta{display:flex;justify-content:space-between;gap:8px;font-size:.8rem;margin-bottom:6px;color:var(--muted)}
+.tag{padding:2px 10px;border-radius:99px;font-size:.72rem;font-weight:600}
+.tag.t{background:rgba(46,204,113,.2);color:#8ff0b6}.tag.s{background:rgba(168,85,247,.25);color:#e0c2ff}
+.comment p{margin:0;overflow-wrap:anywhere}
+@keyframes slide{from{opacity:0;transform:translateY(14px)}}
+
+/* ===== Footer ===== */
+footer{text-align:center;padding:60px 6vw 40px;border-top:1px solid rgba(255,255,255,.1);background:linear-gradient(90deg,rgba(14,124,134,.15),rgba(168,85,247,.15))}
+footer blockquote{margin:0 auto 24px;max-width:640px;font-family:var(--font-title);font-size:clamp(1rem,2.5vw,1.35rem)}
+footer .social a{color:var(--text);margin:0 10px;text-decoration:none;transition:.25s}
+footer .social a:hover{color:var(--space-2);text-shadow:0 0 12px var(--space-2)}
+footer small{display:block;margin-top:18px;color:var(--muted)}
+
+/* ===== Responsivo ===== */
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .side{min-height:42vh;padding:50px 6vw 30px}
+  .hero-center{position:relative;left:auto;top:auto;transform:none;order:-1;margin:24px auto -20px;width:90%}
+  .hero{display:flex;flex-direction:column}
+  .planet,.leaf{width:140px;height:140px}
+  .vote-btns,.row{grid-template-columns:1fr}
+  header{flex-direction:column;gap:6px}
+  nav{justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Painel do telão (#painel) ===== */
+body.painel header,body.painel section,body.painel .hero,body.painel footer{display:none!important}
+#painel{display:none}
+body.painel #painel{display:flex;min-height:100vh;flex-direction:column;justify-content:center;padding:4vw;gap:3vh;
+  background:radial-gradient(circle at 20% 30%,rgba(46,204,113,.25),transparent 50%),radial-gradient(circle at 80% 70%,rgba(168,85,247,.3),transparent 50%),var(--bg)}
+#painel h1{text-align:center;font-size:clamp(1.6rem,4.5vw,3.4rem)}
+#painel .bar{height:clamp(70px,14vh,130px);font-size:clamp(1.4rem,4vw,3rem);margin:0}
+#painel .big{display:flex;justify-content:space-between;font-family:var(--font-title);font-size:clamp(1.2rem,3.5vw,3rem)}
+#painel .tot{text-align:center;font-family:var(--font-title);font-size:clamp(1.4rem,3.5vw,2.8rem);color:var(--space-2)}
+#painel .st{text-align:center;color:var(--muted)}
+.note{text-align:center;color:var(--muted);font-size:.85rem;margin-top:10px}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <a class="logo" href="#escolha">DILEMA DA HUMANIDADE</a>
+  <nav>
+    <a href="#escolha">A Escolha</a>
+    <a href="#terra">Argumentos Terra</a>
+    <a href="#espaco">Argumentos Espaço</a>
+    <a href="#votacao">Votação</a>
+    <a href="#resultados">Resultados</a>
+  </nav>
+</header>
+
+<!-- ===== HERO SPLIT ===== -->
+<div class="hero" id="escolha">
+  <div class="side hero-earth">
+    <div class="leaf"></div>
+    <h2>🌍 Planeta Terra</h2>
+    <p>O único lar que conhecemos: oceanos, florestas e milhões de espécies que dependem de um equilíbrio frágil.</p>
+    <ul><li>Biodiversidade</li><li>Clima</li><li>Preservação</li></ul>
+  </div>
+  <div class="hero-center">
+    <h1>O Futuro da Humanidade: <span class="vs">Terra ou Espaço?</span></h1>
+    <p>Cuidar do que temos ou buscar um novo começo entre as estrelas? Cada escolha tem um custo. Qual valerá a pena?</p>
+    <a class="cta" href="#votacao">Quero escolher</a>
+  </div>
+  <div class="side hero-space">
+    <div class="planet"></div>
+    <h2>🚀 Espaço</h2>
+    <p>Marte, naves e novas fronteiras: a promessa de uma espécie que não coloca todos os ovos na mesma cesta.</p>
+    <ul><li>Colonização</li><li>Tecnologia</li><li>Exploração</li></ul>
+  </div>
+</div>
+
+<!-- ===== VOTAÇÃO ===== -->
+<section id="votacao">
+  <h2 class="sec-title">A Votação</h2>
+  <p class="vote-q">Se você tivesse o poder de decisão, para onde direcionaria os maiores recursos e esforços da humanidade?</p>
+  <div class="vote-btns">
+    <button class="vote-btn btn-earth" data-vote="terra"><span class="emoji">🌍</span>Salvar e Restaurar a Terra</button>
+    <button class="vote-btn btn-space" data-vote="espaco"><span class="emoji">🚀</span>Colonizar Outros Planetas</button>
+  </div>
+  <div class="thanks" id="thanks"></div>
+  <p class="note">Modo tablet: após cada voto a tela é liberada para o próximo visitante.</p>
+</section>
+
+<!-- ===== RESULTADOS ===== -->
+<section id="resultados">
+  <h2 class="sec-title">Resultados</h2>
+  <div class="results">
+    <p class="locked" id="locked">Vote para revelar o resultado atual 🔒</p>
+    <div id="resBox" class="hidden">
+      <div class="bar">
+        <div class="bar-earth" id="barT">50%</div>
+        <div class="bar-space" id="barS">50%</div>
+      </div>
+      <div class="legend"><span>🌍 Terra: <b id="cT">0</b> votos</span><span>🚀 Espaço: <b id="cS">0</b> votos</span></div>
+      <div class="total">Total: <span id="total">0</span> votos</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ARGUMENTOS TERRA ===== -->
+<section class="args earth" id="terra">
+  <h2 class="sec-title">🌍 A Visão Terra</h2>
+  <p class="sec-sub">Antes de procurar outro mundo, cuide do único que sabemos que sustenta a vida.</p>
+  <div class="grid3">
+    <div class="card"><div class="ic">🏡</div><h3>Preservar o único lar</h3><p>Não há, até hoje, outro planeta habitável ao nosso alcance. Perder a Terra é perder tudo.</p></div>
+    <div class="card"><div class="ic">💧</div><h3>Benefício imediato</h3><p>Investir aqui ajuda bilhões de seres vivos agora: água limpa, alimento, ar puro e saúde.</p></div>
+    <div class="card"><div class="ic">🌱</div><h3>Crises climáticas e sociais</h3><p>Os recursos podem atacar desigualdade, fome e aquecimento global antes que fiquem irreversíveis.</p></div>
+  </div>
+</section>
+
+<!-- ===== ARGUMENTOS ESPAÇO ===== -->
+<section class="args space" id="espaco">
+  <h2 class="sec-title">🚀 A Visão Espaço</h2>
+  <p class="sec-sub">Uma espécie em um só planeta vive sob risco permanente. Expandir é um seguro de vida.</p>
+  <div class="grid3">
+    <div class="card"><div class="ic">☄️</div><h3>Sobrevivência da espécie</h3><p>Asteroides, supervulcões ou guerras podem causar extinções em massa. Outros mundos nos protegem.</p></div>
+    <div class="card"><div class="ic">🔬</div><h3>Avanço tecnológico</h3><p>A corrida espacial já nos deu satélites, materiais e medicina. Novos desafios geram novas soluções.</p></div>
+    <div class="card"><div class="ic">🔭</div><h3>Horizontes ampliados</h3><p>Explorar é parte da nossa natureza. Cada fronteira vencida expande o que a humanidade pode ser.</p></div>
+  </div>
+</section>
+
+<!-- ===== COMUNIDADE ===== -->
+<section id="comunidade">
+  <h2 class="sec-title">Opinião da Comunidade</h2>
+  <p class="sec-sub">Por que você votou assim? Deixe um comentário curto.</p>
+  <div class="form">
+    <div class="row">
+      <input id="cName" placeholder="Seu nome (opcional)" maxlength="30">
+      <select id="cTag"><option value="terra">🌍 Planeta Terra</option><option value="espaco">🚀 Espaço</option></select>
+    </div>
+    <textarea id="cText" rows="3" maxlength="240" placeholder="Justifique seu voto em até 240 caracteres…"></textarea>
+    <button class="cta" id="cSend" type="button" style="border:0;cursor:pointer">Publicar comentário</button>
+  </div>
+  <div class="filters">
+    <button class="chip on" data-f="todos">Todos</button>
+    <button class="chip" data-f="terra">🌍 Planeta Terra</button>
+    <button class="chip" data-f="espaco">🚀 Espaço</button>
+  </div>
+  <div class="comments" id="comments"></div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <blockquote>“Talvez o futuro não seja Terra ou Espaço, mas a coragem de proteger um mundo enquanto sonhamos com outros.”</blockquote>
+  <div class="social"><a href="#">Instagram</a><a href="#">X / Twitter</a><a href="#">YouTube</a><a href="#">GitHub</a></div>
+  <small>© 2026 Dilema da Humanidade. Todos os direitos reservados.</small>
+</footer>
+
+<!-- ===== PAINEL DO TELÃO ===== -->
+<div id="painel">
+  <h1>Terra ou Espaço? Placar ao vivo</h1>
+  <div class="big"><span>🌍 <b id="pCT">0</b></span><span><b id="pCS">0</b> 🚀</span></div>
+  <div class="bar"><div class="bar-earth" id="pBT">50%</div><div class="bar-space" id="pBS">50%</div></div>
+  <div class="tot">Total: <span id="pTot">0</span> votos</div>
+  <div class="st" id="pSt">Conectando…</div>
+</div>
+
+<script>
+/* ===== Modo: painel do telão (#painel) ou votação (padrão) ===== */
+const isPanel = location.hash === '#painel';
+if (isPanel) document.body.classList.add('painel');
+const $ = id => document.getElementById(id);
+
+/* Estado local, sempre derivado do banco compartilhado (db). Começa zerado. */
+let votes = { terra:0, espaco:0 }, comments = [], filter = 'todos', myVote = null, db = null, canWrite = false;
+
+/* ===== Placar: barras de porcentagem animadas ===== */
+function paint(ids){
+  const total = votes.terra + votes.espaco;
+  const pT = total ? Math.round(votes.terra / total * 100) : 50, pS = 100 - pT;
+  $(ids.bt).style.width = pT + '%'; $(ids.bt).textContent = '🌍 ' + pT + '%';
+  $(ids.bs).style.width = pS + '%'; $(ids.bs).textContent = pS + '% 🚀';
+  $(ids.ct).textContent = votes.terra.toLocaleString('pt-BR');
+  $(ids.cs).textContent = votes.espaco.toLocaleString('pt-BR');
+  $(ids.tot).textContent = total.toLocaleString('pt-BR');
+}
+const resIds = { bt:'barT', bs:'barS', ct:'cT', cs:'cS', tot:'total' };
+const panIds = { bt:'pBT', bs:'pBS', ct:'pCT', cs:'pCS', tot:'pTot' };
+function render(){ paint(isPanel ? panIds : resIds); }
+
+/* ===== CONFIGURAÇÃO DO SUPABASE (preencha após rodar o supabase-setup.sql) ===== */
+const SUPABASE_URL = 'COLE_AQUI_A_PROJECT_URL';      // ex.: https://abcdxyz.supabase.co
+const SUPABASE_KEY = 'COLE_AQUI_A_ANON_PUBLIC_KEY';  // chave "anon public" (pode ficar no código)
+const configured = !SUPABASE_URL.startsWith('COLE');
+
+/* Pequeno cliente REST (sem bibliotecas externas) */
+const H = { apikey:SUPABASE_KEY, Authorization:'Bearer ' + SUPABASE_KEY, 'Content-Type':'application/json' };
+const api = (path, opt={}) => fetch(SUPABASE_URL + '/rest/v1/' + path, { ...opt, headers:{ ...H, ...(opt.headers||{}) } });
+async function count(choice){
+  const r = await api('votes?select=id&choice=eq.' + choice, { headers:{ Prefer:'count=exact', Range:'0-0' } });
+  return parseInt((r.headers.get('content-range') || '*/0').split('/')[1], 10) || 0;
+}
+
+/* ===== Votação: cada voto é uma linha nova na tabela "votes" ===== */
+function setVoteUI(choice){
+  document.querySelectorAll('.vote-btn').forEach(b => { b.disabled = !!choice; b.classList.toggle('chosen', b.dataset.vote === choice); });
+  $('thanks').textContent = choice ? 'Voto registrado: ' + (choice === 'terra' ? '🌍 Salvar a Terra' : '🚀 Colonizar o Espaço') + '. Obrigado!' : '';
+  if (choice) $('cTag').value = choice;
+}
+document.querySelectorAll('.vote-btn').forEach(btn => btn.addEventListener('click', async () => {
+  if (myVote) return;
+  if (!configured){ $('thanks').textContent = 'Configure o Supabase no código (veja o README).'; return; }
+  myVote = btn.dataset.vote; setVoteUI(myVote);
+  try {
+    const r = await api('votes', { method:'POST', body:JSON.stringify({ choice: myVote }) });
+    if (!r.ok) throw new Error();
+    votes[myVote]++; render();                       // atualiza na hora; o polling confirma em seguida
+  } catch(e){ myVote = null; setVoteUI(null); $('thanks').textContent = 'Não foi possível registrar o voto. Tente de novo.'; return; }
+  /* Modo tablet: libera a tela para o próximo visitante após 4 segundos */
+  setTimeout(() => { myVote = null; setVoteUI(null); }, 4000);
+}));
+
+/* ===== Comentários ===== */
+function renderComments(){
+  const box = $('comments'); box.innerHTML = '';
+  const list = comments.filter(c => filter === 'todos' || c.tag === filter).sort((a,b) => b.ts - a.ts);
+  if (!list.length){ box.innerHTML = '<p class="locked">Nenhum comentário ainda. Seja o primeiro!</p>'; return; }
+  list.forEach(c => {
+    const t = c.tag === 'terra' ? 't' : 's';
+    const el = document.createElement('div'); el.className = 'comment ' + t;
+    const meta = document.createElement('div'); meta.className = 'meta';
+    const who = document.createElement('span'); who.textContent = c.name || 'Anônimo';
+    const tag = document.createElement('span'); tag.className = 'tag ' + t;
+    tag.textContent = c.tag === 'terra' ? '🌍 Planeta Terra' : '🚀 Espaço';
+    meta.append(who, tag);
+    const p = document.createElement('p'); p.textContent = c.text;   // textContent evita injeção de HTML
+    el.append(meta, p); box.append(el);
+  });
+}
+$('cSend').addEventListener('click', async () => {
+  const text = $('cText').value.trim();
+  if (!text){ $('cText').focus(); return; }
+  if (!configured) return;
+  try {
+    const r = await api('comments', { method:'POST', body:JSON.stringify({ name:$('cName').value.trim().slice(0,30), tag:$('cTag').value, text:text.slice(0,240) }) });
+    if (r.ok){ $('cText').value = ''; loadComments(); }
+  } catch(e){}
+});
+document.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  ch.classList.add('on'); filter = ch.dataset.f; renderComments();
+}));
+
+/* ===== Atualização periódica (quase tempo real) ===== */
+async function loadVotes(){
+  try { const [t, e] = await Promise.all([count('terra'), count('espaco')]); votes = { terra:t, espaco:e }; render(); $('pSt').textContent = '🟢 Ao vivo'; }
+  catch(err){ $('pSt').textContent = 'Sem conexão. Tentando novamente…'; }
+}
+async function loadComments(){
+  try {
+    const r = await api('comments?select=name,tag,text,created_at&order=created_at.desc&limit=50');
+    comments = (await r.json()).map(c => ({ ...c, ts: Date.parse(c.created_at) })); renderComments();
+  } catch(err){}
+}
+render(); renderComments();
+$('locked').classList.add('hidden'); $('resBox').classList.remove('hidden');   // placar sempre visível, começa em 0
+if (configured){ loadVotes(); loadComments(); setInterval(loadVotes, 3000); setInterval(loadComments, 10000); }
+else $('pSt').textContent = 'Configure o Supabase para ativar o placar.';
+</script>
+</body>
+</html>
