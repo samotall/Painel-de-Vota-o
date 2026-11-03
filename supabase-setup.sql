@@ -1,28 +1,30 @@
--- 1. Tabela de Votos Públicos
-CREATE TABLE IF NOT EXISTS public.public_votes (
-    id BIGSERIAL PRIMARY KEY,
-    choice VARCHAR(10) NOT NULL,
-    voter_first_name VARCHAR(50) NOT NULL,
-    user_hash VARCHAR(64) UNIQUE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- 1. Apagar tabelas antigas que possam estar com nomes desalinhados
+DROP TABLE IF EXISTS public_votes;
+DROP TABLE IF EXISTS public_comments;
+
+-- 2. Criar a tabela de votos com as colunas esperadas pelo código
+CREATE TABLE public_votes (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    first_name TEXT NOT NULL,
+    choice TEXT NOT NULL,
+    fingerprint TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 2. Tabela de Comentários da Comunidade
-CREATE TABLE IF NOT EXISTS public.public_comments (
-    id BIGSERIAL PRIMARY KEY,
-    author_name VARCHAR(60) NOT NULL,
-    choice_tag VARCHAR(10) NOT NULL,
-    content TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- 3. Criar a tabela de comentários com as colunas esperadas pelo código
+CREATE TABLE public_comments (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    first_name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Habilitar RLS (Row Level Security)
-ALTER TABLE public.public_votes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.public_comments ENABLE ROW LEVEL SECURITY;
+-- 4. Liberar permissões públicas de leitura e escrita (RLS)
+ALTER TABLE public_votes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Permitir leitura publica votos" ON public_votes FOR SELECT USING (true);
+CREATE POLICY "Permitir insercao publica votos" ON public_votes FOR INSERT WITH CHECK (true);
 
--- Permissões de Leitura e Escrita Públicas
-CREATE POLICY "Leitura Pública Votos" ON public.public_votes FOR SELECT USING (true);
-CREATE POLICY "Inserção Pública Votos" ON public.public_votes FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Leitura Pública Comentários" ON public.public_comments FOR SELECT USING (true);
-CREATE POLICY "Inserção Pública Comentários" ON public.public_comments FOR INSERT WITH CHECK (true);
+ALTER TABLE public_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Permitir leitura publica comentarios" ON public_comments FOR SELECT USING (true);
+CREATE POLICY "Permitir insercao publica comentarios" ON public_comments FOR INSERT WITH CHECK (true);
