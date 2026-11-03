@@ -21,18 +21,8 @@
                         orbitron: ['Orbitron', 'sans-serif'],
                     },
                     colors: {
-                        earth: {
-                            base: '#064e3b',
-                            accent: '#10b981',
-                            glow: '#059669',
-                            ocean: '#0284c7',
-                        },
-                        space: {
-                            base: '#1e1b4b',
-                            accent: '#a855f7',
-                            glow: '#d946ef',
-                            neon: '#38bdf8',
-                        }
+                        earth: { base: '#064e3b', accent: '#10b981', glow: '#059669', ocean: '#0284c7' },
+                        space: { base: '#1e1b4b', accent: '#a855f7', glow: '#d946ef', neon: '#38bdf8' }
                     },
                     boxShadow: {
                         'earth-glow': '0 0 25px rgba(16, 185, 129, 0.4)',
@@ -45,7 +35,6 @@
 
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- Supabase JS Client CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -54,69 +43,17 @@
         ::-webkit-scrollbar-track { background: #090d16; }
         ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #374151; }
-
-        .split-container {
-            position: relative;
-            width: 100%;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        .split-side {
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            overflow: hidden;
-            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
-        }
-
-        @media (max-width: 768px) {
-            .split-side {
-                position: relative;
-                width: 100% !important;
-                min-height: 50vh;
-            }
-        }
-
-        .side-earth {
-            left: 0;
-            background: linear-gradient(135deg, rgba(6, 40, 29, 0.95) 0%, rgba(2, 44, 34, 0.9) 100%);
-            border-right: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .side-space {
-            right: 0;
-            background: linear-gradient(135deg, rgba(15, 10, 38, 0.95) 0%, rgba(7, 3, 20, 0.95) 100%);
-            border-left: 1px solid rgba(168, 85, 247, 0.3);
-        }
-
+        .split-container { position: relative; width: 100%; min-height: 100vh; overflow: hidden; }
+        .split-side { position: absolute; width: 50%; height: 100%; overflow: hidden; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; }
+        @media (max-width: 768px) { .split-side { position: relative; width: 100% !important; min-height: 50vh; } }
+        .side-earth { left: 0; background: linear-gradient(135deg, rgba(6, 40, 29, 0.95) 0%, rgba(2, 44, 34, 0.9) 100%); border-right: 1px solid rgba(16, 185, 129, 0.3); }
+        .side-space { right: 0; background: linear-gradient(135deg, rgba(15, 10, 38, 0.95) 0%, rgba(7, 3, 20, 0.95) 100%); border-left: 1px solid rgba(168, 85, 247, 0.3); }
         @media (min-width: 769px) {
-            .split-container:hover .split-side:hover {
-                width: 60%;
-                z-index: 10;
-            }
-            .split-container:hover .split-side:not(:hover) {
-                width: 40%;
-                opacity: 0.7;
-            }
+            .split-container:hover .split-side:hover { width: 60%; z-index: 10; }
+            .split-container:hover .split-side:not(:hover) { width: 40%; opacity: 0.7; }
         }
-
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        #particles-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
+        .glass-panel { background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        #particles-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-teal-500 selection:text-white overflow-x-hidden">
@@ -136,7 +73,6 @@
                     DILEMA<span class="text-xs text-slate-400 font-sans ml-1">HUMANO</span>
                 </span>
             </a>
-
             <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
                 <a href="#hero" class="hover:text-emerald-400 transition-colors">A Escolha</a>
                 <a href="#argumentos-terra" class="hover:text-emerald-400 transition-colors">Terra</a>
@@ -144,7 +80,6 @@
                 <a href="#votacao" class="hover:text-amber-400 transition-colors">Votação</a>
                 <a href="#comentarios" class="hover:text-blue-400 transition-colors">Debate</a>
             </nav>
-
             <div>
                 <a href="#votacao" class="px-4 py-2 rounded-full text-xs md:text-sm font-orbitron font-semibold bg-gradient-to-r from-emerald-500 to-purple-600 text-white shadow-lg shadow-purple-900/20 transition-all hover:scale-105">
                     VOTAR AGORA
@@ -171,17 +106,14 @@
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-
             <p class="text-xs text-slate-300 leading-relaxed">
                 Informe seu primeiro nome para confirmar seu voto. Nenhum dado sensível é armazenado.
             </p>
-
             <form onsubmit="confirmVote(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-orbitron text-slate-300 mb-1">Seu Primeiro Nome <span class="text-emerald-400">*</span></label>
                     <input type="text" id="voter-first-name" required placeholder="Ex: Lucas, Mariana" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
                 </div>
-
                 <button type="submit" id="btn-confirm-vote-submit" class="w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg active:scale-95 bg-emerald-600 hover:bg-emerald-500">
                     CONFIRMAR MEU VOTO
                 </button>
@@ -235,7 +167,7 @@
                     <div id="vote-status-banner" class="hidden mb-8 p-4 rounded-xl text-center text-sm font-medium"></div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                        <button id="btn-vote-earth" onclick="openVoteModal('earth')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-emerald-950/80 to-slate-900 border-2 border-emerald-500/40 hover:border-emerald-400 transition-all text-left flex flex-col justify-between h-48">
+                        <button id="btn-vote-earth" onclick="openVoteModal('earth')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-emerald-950/80 to-slate-900 border-2 border-emerald-500/40 hover:border-emerald-400 transition-all text-left flex flex-col justify-between h-48 cursor-pointer">
                             <div class="flex items-center justify-between z-10">
                                 <span class="text-3xl">🌍</span>
                                 <span class="text-xs font-orbitron px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300">VISÃO TERRA</span>
@@ -246,7 +178,7 @@
                             </div>
                         </button>
 
-                        <button id="btn-vote-space" onclick="openVoteModal('space')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-purple-950/80 to-slate-900 border-2 border-purple-500/40 hover:border-purple-400 transition-all text-left flex flex-col justify-between h-48">
+                        <button id="btn-vote-space" onclick="openVoteModal('space')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-purple-950/80 to-slate-900 border-2 border-purple-500/40 hover:border-purple-400 transition-all text-left flex flex-col justify-between h-48 cursor-pointer">
                             <div class="flex items-center justify-between z-10">
                                 <span class="text-3xl">🚀</span>
                                 <span class="text-xs font-orbitron px-3 py-1 rounded-full bg-purple-500/20 text-purple-300">VISÃO ESPAÇO</span>
@@ -272,7 +204,6 @@
                                 <span class="inline-block w-3 h-3 rounded-full bg-purple-400"></span>
                             </div>
                         </div>
-
                         <div class="h-6 w-full bg-slate-900 rounded-full overflow-hidden p-1 flex border border-slate-800">
                             <div id="earth-bar" class="h-full bg-gradient-to-r from-emerald-600 to-teal-400 rounded-l-full transition-all duration-700" style="width: 50%;"></div>
                             <div id="space-bar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 rounded-r-full transition-all duration-700" style="width: 50%;"></div>
@@ -299,7 +230,6 @@
                             <p class="text-slate-300 text-sm">A Terra possui a teia biológica perfeita para nossa sustentação. Criar ecossistemas artificiais no espaço é um risco imenso.</p>
                         </div>
                     </div>
-
                     <div id="argumentos-espaco" class="space-y-6">
                         <div class="flex items-center gap-3 pb-3 border-b border-purple-500/30">
                             <i class="fa-solid fa-shuttle-space text-2xl text-purple-400"></i>
@@ -320,7 +250,6 @@
                 <div class="text-center space-y-3">
                     <h2 class="font-orbitron text-3xl md:text-4xl font-bold text-white">OPINIÃO DA COMUNIDADE</h2>
                 </div>
-
                 <div class="glass-panel p-6 md:p-8 rounded-2xl border border-slate-800 shadow-xl">
                     <form id="comment-form" onsubmit="submitComment(event)" class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -341,13 +270,12 @@
                             <textarea id="comment-text" required rows="3" placeholder="Escreva o porquê da sua escolha..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-teal-500 resize-none"></textarea>
                         </div>
                         <div class="flex justify-end">
-                            <button type="submit" class="px-6 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-orbitron text-xs font-semibold border border-slate-700 transition-all flex items-center gap-2">
+                            <button type="submit" class="px-6 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-orbitron text-xs font-semibold border border-slate-700 transition-all flex items-center gap-2 cursor-pointer">
                                 PUBLICAR ARGUMENTO <i class="fa-solid fa-paper-plane text-emerald-400"></i>
                             </button>
                         </div>
                     </form>
                 </div>
-
                 <div id="comments-container" class="space-y-4">
                     <div class="text-center py-8 text-slate-500 text-sm">Carregando argumentos...</div>
                 </div>
@@ -362,17 +290,18 @@
     </footer>
 
     <script>
-        // COLE SUAS CREDENCIAIS DO SUPABASE ABAIXO:
+        // Credenciais fornecidas
         const SUPABASE_URL = 'https://wfvryvzknbzvqfrqlysn.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_3uHRwplEvjjAjMHk1dYsPw_oBhcq6F8';
 
         let supabase = null;
-        if (SUPABASE_URL !== 'SUA_SUPABASE_URL_AQUI' && SUPABASE_ANON_KEY !== 'SUA_SUPABASE_ANON_KEY_AQUI') {
-            try {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            } catch (err) {
-                console.warn("Erro ao instanciar Supabase:", err);
-            }
+        try {
+            // Compatibilidade com chaves de publicação modernas (sb_publishable_)
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                auth: { persistSession: false }
+            });
+        } catch (err) {
+            console.warn("Erro ao instanciar Supabase:", err);
         }
 
         let currentVoteChoice = null;
@@ -408,10 +337,10 @@
                     banner.className = "mb-8 p-4 rounded-xl text-center text-sm font-medium bg-purple-500/10 border border-purple-500/30 text-purple-300";
                     banner.innerHTML = `<i class="fa-solid fa-circle-check text-purple-400 mr-2"></i> Seu voto foi registrado a favor de <strong>Colonizar Outros Planetas 🚀</strong>.`;
                 }
-                document.getElementById('btn-vote-earth').disabled = true;
-                document.getElementById('btn-vote-space').disabled = true;
-                document.getElementById('btn-vote-earth').classList.add('opacity-60', 'cursor-not-allowed');
-                document.getElementById('btn-vote-space').classList.add('opacity-60', 'cursor-not-allowed');
+                const btnEarth = document.getElementById('btn-vote-earth');
+                const btnSpace = document.getElementById('btn-vote-space');
+                if(btnEarth) { btnEarth.disabled = true; btnEarth.classList.add('opacity-60', 'cursor-not-allowed'); }
+                if(btnSpace) { btnSpace.disabled = true; btnSpace.classList.add('opacity-60', 'cursor-not-allowed'); }
             }
         }
 
@@ -429,11 +358,11 @@
             if (choice === 'earth') {
                 icon.innerText = '🌍';
                 title.innerText = 'Votar pela Terra';
-                btn.className = 'w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg bg-emerald-600 hover:bg-emerald-500';
+                btn.className = 'w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg bg-emerald-600 hover:bg-emerald-500 cursor-pointer';
             } else {
                 icon.innerText = '🚀';
                 title.innerText = 'Votar pelo Espaço';
-                btn.className = 'w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg bg-purple-600 hover:bg-purple-500';
+                btn.className = 'w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg bg-purple-600 hover:bg-purple-500 cursor-pointer';
             }
             modal.classList.remove('hidden');
         }
@@ -454,11 +383,12 @@
 
         async function confirmVote(event) {
             event.preventDefault();
-            const firstName = document.getElementById('voter-first-name').value.trim();
+            const firstNameInput = document.getElementById('voter-first-name');
+            if (!firstNameInput) return;
+            const firstName = firstNameInput.value.trim();
             if (!firstName) return;
 
             const fingerprint = generateAnonymousFingerprint(firstName);
-
             let success = false;
 
             if (supabase) {
@@ -475,18 +405,18 @@
                             closeVoteModal();
                             return;
                         }
-                        console.warn("Erro Supabase ao votar:", error.message);
+                        console.error("Erro detalhado Supabase ao votar:", error);
                     } else {
                         success = true;
                     }
                 } catch (err) {
-                    console.warn("Exceção ao votar no Supabase:", err);
+                    console.error("Exceção ao conectar com Supabase (Voto):", err);
                 }
             }
 
-            // Fallback local caso o Supabase falhe ou demore
+            // Fallback robusto local se a API falhar
             if (!success) {
-                let localVotes = JSON.parse(localStorage.getItem('dilemma_local_counts')) || { earth: 10, space: 12 };
+                let localVotes = JSON.parse(localStorage.getItem('dilemma_local_counts')) || { earth: 12, space: 15 };
                 localVotes[currentVoteChoice]++;
                 localStorage.setItem('dilemma_local_counts', JSON.stringify(localVotes));
             }
@@ -514,14 +444,16 @@
                         eCount = data.filter(v => v.choice === 'earth').length;
                         sCount = data.filter(v => v.choice === 'space').length;
                         loadedFromSupabase = true;
+                    } else if (error) {
+                        console.error("Erro ao carregar votos do Supabase:", error);
                     }
                 } catch (err) {
-                    console.warn("Não foi possível carregar do Supabase.");
+                    console.error("Exceção ao carregar votos:", err);
                 }
             }
 
             if (!loadedFromSupabase) {
-                let localVotes = JSON.parse(localStorage.getItem('dilemma_local_counts')) || { earth: 15, space: 18 };
+                let localVotes = JSON.parse(localStorage.getItem('dilemma_local_counts')) || { earth: 12, space: 15 };
                 eCount = localVotes.earth;
                 sCount = localVotes.space;
             }
@@ -535,18 +467,30 @@
             const earthPct = total > 0 ? Math.round((votesData.earth / total) * 100) : 50;
             const spacePct = total > 0 ? (100 - earthPct) : 50;
 
-            document.getElementById('earth-percentage').innerText = `${earthPct}%`;
-            document.getElementById('space-percentage').innerText = `${spacePct}%`;
-            document.getElementById('earth-bar').style.width = `${earthPct}%`;
-            document.getElementById('space-bar').style.width = `${spacePct}%`;
-            document.getElementById('total-votes-count').innerText = total;
+            const earthElem = document.getElementById('earth-percentage');
+            const spaceElem = document.getElementById('space-percentage');
+            const earthBar = document.getElementById('earth-bar');
+            const spaceBar = document.getElementById('space-bar');
+            const totalCount = document.getElementById('total-votes-count');
+
+            if(earthElem) earthElem.innerText = `${earthPct}%`;
+            if(spaceElem) spaceElem.innerText = `${spacePct}%`;
+            if(earthBar) earthBar.style.width = `${earthPct}%`;
+            if(spaceBar) spaceBar.style.width = `${spacePct}%`;
+            if(totalCount) totalCount.innerText = total;
         }
 
         async function submitComment(event) {
             event.preventDefault();
-            const name = document.getElementById('comment-name').value.trim();
-            const category = document.getElementById('comment-category').value;
-            const text = document.getElementById('comment-text').value.trim();
+            const nameInput = document.getElementById('comment-name');
+            const categoryInput = document.getElementById('comment-category');
+            const textInput = document.getElementById('comment-text');
+
+            if(!nameInput || !categoryInput || !textInput) return;
+
+            const name = nameInput.value.trim();
+            const category = categoryInput.value;
+            const text = textInput.value.trim();
             if (!name || !text) return;
 
             const newComment = {
@@ -556,13 +500,24 @@
                 created_at: new Date().toISOString()
             };
 
+            let commentSaved = false;
             if (supabase) {
                 try {
-                    await supabase.from('public_comments').insert([newComment]);
+                    const { error } = await supabase.from('public_comments').insert([newComment]);
+                    if (!error) {
+                        commentSaved = true;
+                    } else {
+                        console.error("Erro Supabase ao comentar:", error);
+                    }
                 } catch (err) {
-                    console.warn("Erro ao enviar comentário:", err);
+                    console.error("Exceção ao enviar comentário:", err);
                 }
             }
+
+            // Fallback local para comentários se o Supabase falhar
+            let localComments = JSON.parse(localStorage.getItem('dilemma_local_comments')) || [];
+            localComments.unshift(newComment);
+            localStorage.setItem('dilemma_local_comments', JSON.stringify(localComments));
 
             document.getElementById('comment-form').reset();
             showToast('Argumento publicado com sucesso!', '💬');
@@ -571,6 +526,7 @@
 
         async function loadCommentsData() {
             const container = document.getElementById('comments-container');
+            if(!container) return;
             let comments = [];
 
             if (supabase) {
@@ -580,10 +536,17 @@
                         .select('*')
                         .order('created_at', { ascending: false })
                         .limit(20);
-                    if (!error && data) comments = data;
+                    if (!error && data && data.length > 0) {
+                        comments = data;
+                    }
                 } catch (err) {
-                    console.warn("Erro ao buscar comentários.");
+                    console.error("Erro ao buscar comentários do Supabase:", err);
                 }
+            }
+
+            // Se o Supabase estiver vazio ou offline, carrega do localStorage de fallback
+            if (comments.length === 0) {
+                comments = JSON.parse(localStorage.getItem('dilemma_local_comments')) || [];
             }
 
             container.innerHTML = '';
@@ -618,6 +581,7 @@
 
         function initParticlesCanvas() {
             const canvas = document.getElementById('particles-canvas');
+            if(!canvas) return;
             const ctx = canvas.getContext('2d');
             let width = canvas.width = window.innerWidth;
             let height = canvas.height = window.innerHeight;
