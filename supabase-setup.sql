@@ -1,22 +1,28 @@
--- Rode este script no Supabase: SQL Editor > New query > Run
-
-create table if not exists votes (
-  id bigint generated always as identity primary key,
-  choice text not null check (choice in ('terra','espaco')),
-  created_at timestamptz not null default now()
-);
-create table if not exists comments (
-  id bigint generated always as identity primary key,
-  name text check (char_length(name) <= 30),
-  tag text not null check (tag in ('terra','espaco')),
-  text text not null check (char_length(text) between 1 and 240),
-  created_at timestamptz not null default now()
+-- 1. Tabela de Votos Públicos
+CREATE TABLE IF NOT EXISTS public.public_votes (
+    id BIGSERIAL PRIMARY KEY,
+    choice VARCHAR(10) NOT NULL,
+    voter_first_name VARCHAR(50) NOT NULL,
+    user_hash VARCHAR(64) UNIQUE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Segurança: visitantes (chave anon) só podem LER e INSERIR; nunca alterar ou apagar.
-alter table votes enable row level security;
-alter table comments enable row level security;
-create policy "ler votos"        on votes    for select to anon using (true);
-create policy "inserir votos"    on votes    for insert to anon with check (true);
-create policy "ler comentarios"  on comments for select to anon using (true);
-create policy "inserir comentarios" on comments for insert to anon with check (true);
+-- 2. Tabela de Comentários da Comunidade
+CREATE TABLE IF NOT EXISTS public.public_comments (
+    id BIGSERIAL PRIMARY KEY,
+    author_name VARCHAR(60) NOT NULL,
+    choice_tag VARCHAR(10) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Habilitar RLS (Row Level Security)
+ALTER TABLE public.public_votes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.public_comments ENABLE ROW LEVEL SECURITY;
+
+-- Permissões de Leitura e Escrita Públicas
+CREATE POLICY "Leitura Pública Votos" ON public.public_votes FOR SELECT USING (true);
+CREATE POLICY "Inserção Pública Votos" ON public.public_votes FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Leitura Pública Comentários" ON public.public_comments FOR SELECT USING (true);
+CREATE POLICY "Inserção Pública Comentários" ON public.public_comments FOR INSERT WITH CHECK (true);
