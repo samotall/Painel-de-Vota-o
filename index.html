@@ -1,1060 +1,1213 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dilema da Humanidade: Vida na Terra vs. Vida no Espaço</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dilema da Humanidade: Terra vs. Espaço</title>
+  
+  <!-- Fontes Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       1. VARIÁVEIS E RESET GLOBAL
+       ========================================================================== */
+    :root {
+      --bg-dark: #05070f;
+      --text-main: #f0f4f8;
+      --text-muted: #94a3b8;
+      
+      /* Lado Terra (Ecológico & Preservação) */
+      --earth-primary: #10b981;
+      --earth-glow: rgba(16, 185, 129, 0.4);
+      --earth-gradient: linear-gradient(135deg, #064e3b 0%, #047857 50%, #10b981 100%);
+      --earth-bg: rgba(6, 78, 59, 0.15);
+      
+      /* Lado Espaço (Futurismo & Colonização) */
+      --space-primary: #8b5cf6;
+      --space-glow: rgba(139, 92, 246, 0.4);
+      --space-gradient: linear-gradient(135deg, #3b0764 0%, #6d28d9 50%, #8b5cf6 100%);
+      --space-bg: rgba(59, 7, 100, 0.15);
+      
+      --card-bg: rgba(15, 23, 42, 0.65);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --font-display: 'Orbitron', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        orbitron: ['Orbitron', 'sans-serif'],
-                    },
-                    colors: {
-                        earth: {
-                            base: '#064e3b',
-                            accent: '#10b981',
-                            glow: '#059669',
-                            ocean: '#0284c7',
-                        },
-                        space: {
-                            base: '#1e1b4b',
-                            accent: '#a855f7',
-                            glow: '#d946ef',
-                            neon: '#38bdf8',
-                        }
-                    },
-                    boxShadow: {
-                        'earth-glow': '0 0 25px rgba(16, 185, 129, 0.4)',
-                        'space-glow': '0 0 25px rgba(168, 85, 247, 0.4)',
-                    }
-                }
-            }
-        }
-    </script>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
 
-    <!-- Supabase JS Client CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    /* Canvas de Fundo Animado */
+    #space-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
 
-    <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #090d16;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1f293d;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #374151;
-        }
+    /* ==========================================================================
+       2. CABEÇALHO (HEADER)
+       ========================================================================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(5, 7, 15, 0.8);
+      border-bottom: 1px solid var(--card-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        /* Hero Split Screen Effects */
-        .split-container {
-            position: relative;
-            width: 100%;
-            min-height: 100vh;
-            overflow: hidden;
-        }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--earth-primary), #38bdf8, var(--space-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-        .split-side {
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            overflow: hidden;
-            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
-        }
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
 
-        @media (max-width: 768px) {
-            .split-side {
-                position: relative;
-                width: 100% !important;
-                min-height: 50vh;
-            }
-        }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
 
-        .side-earth {
-            left: 0;
-            background: linear-gradient(135deg, rgba(6, 40, 29, 0.95) 0%, rgba(2, 44, 34, 0.9) 100%);
-            border-right: 1px solid rgba(16, 185, 129, 0.3);
-        }
+    nav a:hover {
+      color: var(--text-main);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
 
-        .side-space {
-            right: 0;
-            background: linear-gradient(135deg, rgba(15, 10, 38, 0.95) 0%, rgba(7, 3, 20, 0.95) 100%);
-            border-left: 1px solid rgba(168, 85, 247, 0.3);
-        }
+    /* ==========================================================================
+       3. HERO SECTION (SPLIT SCREEN DUALIDADE)
+       ========================================================================== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding-top: 5rem;
+      overflow: hidden;
+    }
 
-        /* Hover Expansion on Desktop */
-        @media (min-width: 769px) {
-            .split-container:hover .split-side:hover {
-                width: 60%;
-                z-index: 10;
-            }
-            .split-container:hover .split-side:not(:hover) {
-                width: 40%;
-                opacity: 0.7;
-            }
-        }
+    .hero-split-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      z-index: 1;
+    }
 
-        /* Glassmorphism card utility */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
+    .split-side {
+      flex: 1;
+      position: relative;
+      transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
 
-        /* Neon Glow animations */
-        @keyframes pulse-earth {
-            0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.6); }
-        }
+    .split-side::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 30%, rgba(5, 7, 15, 0.85) 90%);
+    }
 
-        @keyframes pulse-space {
-            0%, 100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.6); }
-        }
+    .split-side.earth {
+      background: linear-gradient(135deg, rgba(6, 78, 59, 0.4) 0%, rgba(5, 7, 15, 0.9) 100%);
+      border-right: 1px solid rgba(16, 185, 129, 0.2);
+    }
 
-        .earth-pulse-active {
-            animation: pulse-earth 3s infinite ease-in-out;
-        }
+    .split-side.space {
+      background: linear-gradient(225deg, rgba(59, 7, 100, 0.4) 0%, rgba(5, 7, 15, 0.9) 100%);
+      border-left: 1px solid rgba(139, 92, 246, 0.2);
+    }
 
-        .space-pulse-active {
-            animation: pulse-space 3s infinite ease-in-out;
-        }
+    .split-side:hover {
+      flex: 1.25;
+    }
 
-        /* Floating particles canvas background */
-        #particles-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-    </style>
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 900px;
+      padding: 2rem;
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+    }
+
+    .hero-title span.earth-txt {
+      color: var(--earth-primary);
+      text-shadow: 0 0 25px var(--earth-glow);
+    }
+
+    .hero-title span.space-txt {
+      color: var(--space-primary);
+      text-shadow: 0 0 25px var(--space-glow);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      font-weight: 400;
+    }
+
+    .scroll-indicator {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      margin-top: 1rem;
+    }
+
+    .scroll-indicator:hover {
+      color: var(--text-main);
+      transform: translateY(3px);
+    }
+
+    /* ==========================================================================
+       4. SEÇÃO DE VOTAÇÃO
+       ========================================================================== */
+    .section {
+      position: relative;
+      z-index: 10;
+      padding: 6rem 2rem;
+      max-width: 1250px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+    }
+
+    .vote-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .vote-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .vote-card.earth-card {
+      box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.1);
+    }
+
+    .vote-card.space-card {
+      box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.1);
+    }
+
+    .vote-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .vote-card.earth-card:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 20px 40px -15px var(--earth-glow);
+    }
+
+    .vote-card.space-card:hover {
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 20px 40px -15px var(--space-glow);
+    }
+
+    .vote-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .vote-card-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .vote-card-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn-vote {
+      width: 100%;
+      padding: 1.25rem 2rem;
+      border: none;
+      border-radius: 14px;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-earth {
+      background: var(--earth-gradient);
+      box-shadow: 0 4px 20px var(--earth-glow);
+    }
+
+    .btn-space {
+      background: var(--space-gradient);
+      box-shadow: 0 4px 20px var(--space-glow);
+    }
+
+    .btn-vote:hover {
+      filter: brightness(1.15);
+      transform: scale(1.02);
+    }
+
+    .btn-vote:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Placar do Resultado */
+    .results-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .progress-bar-bg {
+      height: 24px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .progress-earth {
+      background: var(--earth-gradient);
+    }
+
+    .progress-space {
+      background: var(--space-gradient);
+    }
+
+    .total-votes-count {
+      text-align: center;
+      margin-top: 1rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* ==========================================================================
+       5. DEBATES & ARGUMENTOS (CARDS)
+       ========================================================================== */
+    .grid-arguments {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .arg-column {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .arg-column.earth {
+      border-top: 4px solid var(--earth-primary);
+    }
+
+    .arg-column.space {
+      border-top: 4px solid var(--space-primary);
+    }
+
+    .arg-column-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .arg-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .arg-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .arg-icon {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .earth .arg-icon { color: var(--earth-primary); }
+    .space .arg-icon { color: var(--space-primary); }
+
+    .arg-content h4 {
+      font-size: 1.05rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .arg-content p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* ==========================================================================
+       6. COMUNIDADE E COMENTÁRIOS
+       ========================================================================== */
+    .community-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .comment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    input, textarea, select {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 0.9rem 1.2rem;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    select option {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .btn-submit-comment {
+      align-self: flex-end;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.9rem 2rem;
+      border-radius: 12px;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-submit-comment:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .comments-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .comment-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .comment-author {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .comment-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .comment-tag.earth {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--earth-primary);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .comment-tag.space {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--space-primary);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .comment-body {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* ==========================================================================
+       7. MODAIS
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 500px;
+      padding: 2.5rem;
+      position: relative;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .modal-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       8. RODAPÉ (FOOTER)
+       ========================================================================== */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 3rem 2rem;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      background: rgba(5, 7, 15, 0.95);
+    }
+
+    .footer-quote {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--text-main);
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .footer-copy {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .hero-split-container {
+        flex-direction: column;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      nav {
+        display: none;
+      }
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-teal-500 selection:text-white overflow-x-hidden">
+<body>
 
-    <!-- CANVAS PARA EFEITO DE POEIRA ESPACIAL E ELEMENTOS NATURAIS -->
-    <canvas id="particles-canvas"></canvas>
+  <!-- Canvas Animado de Fundo -->
+  <canvas id="space-canvas"></canvas>
 
-    <!-- HEADER FLUTUANTE (GLASSMORPHISM) -->
-    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 py-4 px-6 md:px-12 glass-panel border-b border-slate-800/50">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <!-- Logo / Título -->
-            <a href="#" class="flex items-center gap-3 group">
-                <div class="relative w-9 h-9 flex items-center justify-center rounded-full bg-gradient-to-tr from-emerald-500 to-purple-600 p-[2px]">
-                    <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center">
-                        <i class="fa-solid font-orbitron text-xs text-slate-200">⌘</i>
-                    </div>
-                </div>
-                <span class="font-orbitron font-bold text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-slate-100 to-purple-400 group-hover:opacity-90 transition-opacity">
-                    DILEMA<span class="text-xs text-slate-400 font-sans ml-1">HUMANO</span>
-                </span>
-            </a>
+  <!-- Cabeçalho -->
+  <header>
+    <div class="logo">
+      <i data-lucide="compass"></i>
+      Dilema Humano
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#hero">A Escolha</a></li>
+        <li><a href="#votacao">Votação</a></li>
+        <li><a href="#argumentos">Argumentos</a></li>
+        <li><a href="#comunidade">Comunidade</a></li>
+      </ul>
+    </nav>
+  </header>
 
-            <!-- Navegação Desktop -->
-            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
-                <a href="#hero" class="hover:text-emerald-400 transition-colors">A Escolha</a>
-                <a href="#argumentos-terra" class="hover:text-emerald-400 transition-colors">Terra</a>
-                <a href="#argumentos-espaco" class="hover:text-purple-400 transition-colors">Espaço</a>
-                <a href="#votacao" class="hover:text-amber-400 transition-colors">Votação</a>
-                <a href="#comentarios" class="hover:text-blue-400 transition-colors">Debate</a>
-            </nav>
+  <!-- Seção Principal (Split Screen Hero) -->
+  <section class="hero" id="hero">
+    <div class="hero-split-container">
+      <div class="split-side earth"></div>
+      <div class="split-side space"></div>
+    </div>
+    
+    <div class="hero-content">
+      <span class="hero-badge">Debate Global da Nossos Tempos</span>
+      <h1 class="hero-title">
+        <span class="earth-txt">Terra</span> vs <span class="space-txt">Espaço</span>
+      </h1>
+      <p class="hero-subtitle">
+        Devemos concentrar nossa inteligência e capital na restauração do nosso berço biológico ou expandir nossa espécie para novos mundos distantes?
+      </p>
+      <a href="#votacao" class="scroll-indicator">
+        Tomar uma Posição <i data-lucide="arrow-down"></i>
+      </a>
+    </div>
+  </section>
 
-            <!-- CTA Header -->
-            <div class="flex items-center gap-3">
-                <button onclick="toggleSupabaseModal()" class="px-3 py-1.5 rounded-full text-xs font-orbitron font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-all">
-                    <i class="fa-solid fa-database text-emerald-400"></i> Supabase
-                </button>
-                <a href="#votacao" class="px-4 py-2 rounded-full text-xs md:text-sm font-orbitron font-semibold bg-gradient-to-r from-emerald-500 to-purple-600 hover:from-emerald-400 hover:to-purple-500 text-white shadow-lg shadow-purple-900/20 transition-all hover:scale-105 active:scale-95">
-                    VOTAR AGORA
-                </a>
-            </div>
-        </div>
-    </header>
-
-    <!-- NOTIFICAÇÃO TOAST FLUTUANTE -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 max-w-sm glass-panel p-4 rounded-xl border border-slate-700 flex items-center gap-3 shadow-2xl">
-        <div id="toast-icon" class="text-xl">ℹ️</div>
-        <div id="toast-message" class="text-xs text-slate-200">Notificação aqui</div>
+  <!-- Seção de Votação Interativa -->
+  <section class="section" id="votacao">
+    <div class="section-header">
+      <h2 class="section-title">A Grande Escolha</h2>
+      <p class="section-desc">Se você detivesse o poder final de decisão, para onde alocaria os maiores investimentos e talentos da humanidade?</p>
     </div>
 
-    <!-- MODAL CONFIGURAÇÃO SUPABASE & SCRIPT SQL -->
-    <div id="supabase-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
-        <div class="glass-panel max-w-2xl w-full p-6 md:p-8 rounded-2xl border border-slate-700 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-server text-emerald-400 text-xl"></i>
-                    <h3 class="font-orbitron font-bold text-lg text-white">Conexão Supabase Database</h3>
-                </div>
-                <button onclick="toggleSupabaseModal()" class="text-slate-400 hover:text-white transition-colors text-xl">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <!-- Indicador de Status -->
-            <div id="connection-status-badge" class="p-3 rounded-lg text-xs font-semibold flex items-center justify-between bg-amber-500/10 border border-amber-500/30 text-amber-300">
-                <span>Modo Atual: <strong id="status-mode-text">Modo Local / Fallback (Sem Supabase)</strong></span>
-                <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
-            </div>
-
-            <!-- Formulário Credenciais -->
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-orbitron text-slate-300 mb-1">Supabase Project URL</label>
-                    <input type="text" id="supabase-url" placeholder="https://xyzcompany.supabase.co" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-orbitron text-slate-300 mb-1">Supabase Anon Key (Public)</label>
-                    <input type="password" id="supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
-                </div>
-                <button onclick="saveSupabaseCredentials()" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-orbitron text-xs font-semibold transition-all">
-                    CONECTAR SUPABASE
-                </button>
-            </div>
-
-            <!-- Instruções SQL -->
-            <div class="space-y-3 pt-4 border-t border-slate-800">
-                <div class="flex justify-between items-center">
-                    <h4 class="font-orbitron text-xs font-bold text-slate-200">Script SQL para Criar Tabelas (SQL Editor)</h4>
-                    <button onclick="copySQLScript()" class="text-xs px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1">
-                        <i class="fa-regular fa-copy"></i> Copiar SQL
-                    </button>
-                </div>
-                <pre class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-[11px] font-mono text-emerald-400 overflow-x-auto max-h-40 selection:bg-slate-800">
-CREATE TABLE IF NOT EXISTS public_votes (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  first_name TEXT NOT NULL,
-  choice TEXT NOT NULL,
-  fingerprint TEXT NOT NULL UNIQUE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS public_comments (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  first_name TEXT NOT NULL,
-  category TEXT NOT NULL,
-  comment TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
-ALTER TABLE public_votes ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Leitura publica de votos" ON public_votes FOR SELECT USING (true);
-CREATE POLICY "Inserção publica de votos" ON public_votes FOR INSERT WITH CHECK (true);
-
-ALTER TABLE public_comments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Leitura publica de comentários" ON public_comments FOR SELECT USING (true);
-CREATE POLICY "Inserção publica de comentários" ON public_comments FOR INSERT WITH CHECK (true);</pre>
-            </div>
+    <div class="vote-cards">
+      <!-- Card Terra -->
+      <div class="vote-card earth-card">
+        <div>
+          <div class="vote-icon">🌍</div>
+          <h3 class="vote-card-title" style="color: var(--earth-primary);">Salvar e Restaurar a Terra</h3>
+          <p class="vote-card-desc">Foco absoluto na transição ecológica, regeneração dos ecossistemas, cura de doenças e erradicação da pobreza global.</p>
         </div>
+        <button class="btn-vote btn-earth" onclick="openVoteModal('EARTH')">
+          <i data-lucide="globe"></i> Votar na Terra
+        </button>
+      </div>
+
+      <!-- Card Espaço -->
+      <div class="vote-card space-card">
+        <div>
+          <div class="vote-icon">🚀</div>
+          <h3 class="vote-card-title" style="color: var(--space-primary);">Colonizar Outros Planetas</h3>
+          <p class="vote-card-desc">Garantia de sobrevivência multiplanetária contra extinções em massa, mineração de asteroides e expansão cósmica.</p>
+        </div>
+        <button class="btn-vote btn-space" onclick="openVoteModal('SPACE')">
+          <i data-lucide="rocket"></i> Votar no Espaço
+        </button>
+      </div>
     </div>
 
-    <!-- MODAL CONFIRMAÇÃO DE VOTO COM NOME -->
-    <div id="vote-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
-        <div class="glass-panel max-w-md w-full p-6 md:p-8 rounded-2xl border border-slate-700 shadow-2xl space-y-6">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <span id="vote-modal-icon" class="text-2xl">🌍</span>
-                    <h3 id="vote-modal-title" class="font-orbitron font-bold text-lg text-white">Confirmar Voto</h3>
-                </div>
-                <button onclick="closeVoteModal()" class="text-slate-400 hover:text-white transition-colors">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
+    <!-- Placar e Estatísticas -->
+    <div class="results-container">
+      <div class="results-header">
+        <span style="color: var(--earth-primary);"><i data-lucide="globe" style="vertical-align: middle;"></i> Terra: <strong id="earth-pct">0%</strong></span>
+        <span style="color: var(--space-primary);"><i data-lucide="rocket" style="vertical-align: middle;"></i> Espaço: <strong id="space-pct">0%</strong></span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-fill progress-earth" id="earth-bar" style="width: 50%;"></div>
+        <div class="progress-fill progress-space" id="space-bar" style="width: 50%;"></div>
+      </div>
+      <div class="total-votes-count">
+        Total de votos computados: <span id="total-votes-label" style="font-weight: 700; color: #fff;">0</span>
+      </div>
+    </div>
+  </section>
 
-            <p class="text-xs text-slate-300 leading-relaxed">
-                Para evitar votos duplicados e garantir a integridade da enquete sem registrar dados pessoais sensíveis, informe seu primeiro nome.
-            </p>
-
-            <form onsubmit="confirmVote(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-orbitron text-slate-300 mb-1">Seu Primeiro Nome <span class="text-emerald-400">*</span></label>
-                    <input type="text" id="voter-first-name" required placeholder="Ex: Lucas, Mariana, Arthur" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
-                </div>
-
-                <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
-                    <i class="fa-solid fa-shield-cat text-emerald-400 text-sm"></i>
-                    <span>🔒 NENHUM dado sensível (como IP, e-mail ou documento) é coletado.</span>
-                </div>
-
-                <button type="submit" id="btn-confirm-vote-submit" class="w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg active:scale-95 bg-emerald-600 hover:bg-emerald-500">
-                    CONFIRMAR MEU VOTO
-                </button>
-            </form>
-        </div>
+  <!-- Seção de Argumentos -->
+  <section class="section" id="argumentos">
+    <div class="section-header">
+      <h2 class="section-title">Confronto de Visões</h2>
+      <p class="section-desc">Analise os fundamentos racionais e filosóficos que sustentam ambos os caminhos.</p>
     </div>
 
-    <main class="relative z-10">
-        <!-- 1. HERO SECTION (SPLIT SCREEN DUALIDADE) -->
-        <section id="hero" class="split-container pt-20 md:pt-0">
-            <!-- LADO ESQUERDO: PLANETA TERRA -->
-            <div class="split-side side-earth flex flex-col justify-center px-8 md:px-16 py-12">
-                <!-- Overlay Decorativo Natureza -->
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(16,185,129,0.15),transparent_70%)] pointer-events-none"></div>
-                
-                <div class="max-w-xl mx-auto md:ml-auto md:mr-6 z-10 space-y-6">
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 backdrop-blur-md">
-                        <i class="fa-solid fa-leaf text-emerald-400"></i> PRESERVAÇÃO & BIODIVERSIDADE
-                    </div>
-                    
-                    <h1 class="font-orbitron font-extrabold text-3xl sm:text-4xl lg:text-5xl text-emerald-100 leading-tight">
-                        Salvar Nosso <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Único Lar</span>
-                    </h1>
-
-                    <p class="text-slate-300 text-base md:text-lg leading-relaxed">
-                        A Terra é um oásis raro no cosmos. Antes de buscar novos mundos, devemos investir todos os recursos disponíveis para curar o planeta, regenerar os ecossistemas e resolver as desigualdades da humanidade.
-                    </p>
-
-                    <div class="pt-4 flex flex-wrap gap-4">
-                        <a href="#argumentos-terra" class="px-6 py-3 rounded-lg font-medium bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/50 hover:border-emerald-400 transition-all flex items-center gap-2">
-                            Explorar Visão Terra <i class="fa-solid fa-arrow-down text-xs"></i>
-                        </a>
-                    </div>
-                </div>
+    <div class="grid-arguments">
+      <!-- Visão Terra -->
+      <div class="arg-column earth">
+        <h3 class="arg-column-title" style="color: var(--earth-primary);">
+          <i data-lucide="shield-check"></i> Rota Terra: Preservação
+        </h3>
+        <ul class="arg-list">
+          <li class="arg-item">
+            <div class="arg-icon"><i data-lucide="heart-pulse"></i></div>
+            <div class="arg-content">
+              <h4>Único Oásis Garantido</h4>
+              <p>A Terra é o único ambiente no universo conhecido perfeitamente ajustado para nossa fisiologia e biotecnologia natural.</p>
             </div>
-
-            <!-- LADO DIREITO: ESPAÇO & COLONIZAÇÃO -->
-            <div class="split-side side-space flex flex-col justify-center px-8 md:px-16 py-12">
-                <!-- Overlay Decorativo Espaço -->
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(168,85,247,0.15),transparent_70%)] pointer-events-none"></div>
-                
-                <div class="max-w-xl mx-auto md:mr-auto md:ml-6 z-10 space-y-6">
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-purple-500/10 border border-purple-500/30 text-purple-300 backdrop-blur-md">
-                        <i class="fa-solid fa-rocket text-purple-400"></i> SOBREVIVÊNCIA & EXPANSÃO
-                    </div>
-                    
-                    <h1 class="font-orbitron font-extrabold text-3xl sm:text-4xl lg:text-5xl text-purple-100 leading-tight">
-                        Colonizar as <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">Estrelas</span>
-                    </h1>
-
-                    <p class="text-slate-300 text-base md:text-lg leading-relaxed">
-                        Colocar todos os ovos em uma única cesta planetária representa risco existencial. O futuro da consciência humana reside em tornar a humanidade uma espécie multiplanetária e explorar o cosmos.
-                    </p>
-
-                    <div class="pt-4 flex flex-wrap gap-4">
-                        <a href="#argumentos-espaco" class="px-6 py-3 rounded-lg font-medium bg-purple-600/30 border border-purple-500/40 text-purple-300 hover:bg-purple-600/50 hover:border-purple-400 transition-all flex items-center gap-2">
-                            Explorar Visão Espaço <i class="fa-solid fa-arrow-down text-xs"></i>
-                        </a>
-                    </div>
-                </div>
+          </li>
+          <li class="arg-item">
+            <div class="arg-icon"><i data-lucide="users"></i></div>
+            <div class="arg-content">
+              <h4>Impacto Humanitário Imediato</h4>
+              <p>Cada dólar investido no planeta resolve urgências humanas ativas de bilhões de vidas em vez de poucas colônias de elite.</p>
             </div>
-        </section>
-
-        <!-- 2. SEÇÃO DE VOTAÇÃO INTERATIVA -->
-        <section id="votacao" class="py-24 px-6 md:px-12 relative bg-slate-950">
-            <div class="max-w-5xl mx-auto">
-                <div class="text-center space-y-4 mb-14">
-                    <h2 class="font-orbitron text-3xl md:text-5xl font-extrabold text-white">
-                        TOME SUA DECISÃO
-                    </h2>
-                    <p class="text-slate-400 max-w-2xl mx-auto text-base md:text-lg">
-                        Se você tivesse o poder de direcionar os maiores recursos econômicos e científicos da humanidade, qual seria o foco prioritário?
-                    </p>
-                </div>
-
-                <!-- Card de Votação Glassmorphism -->
-                <div class="glass-panel p-8 md:p-12 rounded-3xl border border-slate-800 shadow-2xl relative overflow-hidden">
-                    <!-- Status do Voto do Usuário -->
-                    <div id="vote-status-banner" class="hidden mb-8 p-4 rounded-xl text-center text-sm font-medium"></div>
-
-                    <!-- Botões de Votação Interativos -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                        <!-- Botão Terra -->
-                        <button id="btn-vote-earth" onclick="openVoteModal('earth')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-emerald-950/80 to-slate-900 border-2 border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 hover:shadow-earth-glow text-left flex flex-col justify-between h-48 overflow-hidden active:scale-[0.98]">
-                            <div class="absolute -right-6 -bottom-6 text-emerald-500/10 group-hover:text-emerald-500/20 text-9xl transition-all pointer-events-none">
-                                🌍
-                            </div>
-                            <div class="flex items-center justify-between z-10">
-                                <span class="text-3xl">🌍</span>
-                                <span class="text-xs font-orbitron px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">VISÃO TERRA</span>
-                            </div>
-                            <div class="z-10">
-                                <h3 class="font-orbitron text-xl font-bold text-emerald-100 group-hover:text-emerald-300 transition-colors">Salvar e Restaurar a Terra</h3>
-                                <p class="text-xs text-slate-400 mt-1">Foco total no clima, sustentabilidade e oceanos.</p>
-                            </div>
-                        </button>
-
-                        <!-- Botão Espaço -->
-                        <button id="btn-vote-space" onclick="openVoteModal('space')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-purple-950/80 to-slate-900 border-2 border-purple-500/40 hover:border-purple-400 transition-all duration-300 hover:shadow-space-glow text-left flex flex-col justify-between h-48 overflow-hidden active:scale-[0.98]">
-                            <div class="absolute -right-6 -bottom-6 text-purple-500/10 group-hover:text-purple-500/20 text-9xl transition-all pointer-events-none">
-                                🚀
-                            </div>
-                            <div class="flex items-center justify-between z-10">
-                                <span class="text-3xl">🚀</span>
-                                <span class="text-xs font-orbitron px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">VISÃO ESPAÇO</span>
-                            </div>
-                            <div class="z-10">
-                                <h3 class="font-orbitron text-xl font-bold text-purple-100 group-hover:text-purple-300 transition-colors">Colonizar Outros Planetas</h3>
-                                <p class="text-xs text-slate-400 mt-1">Expansão para Marte, Lua e exploração profunda.</p>
-                            </div>
-                        </button>
-                    </div>
-
-                    <!-- Gráfico e Estatísticas em Tempo Real -->
-                    <div class="space-y-4 pt-4 border-t border-slate-800">
-                        <div class="flex justify-between items-end font-orbitron text-sm">
-                            <div class="flex items-center gap-2">
-                                <span class="inline-block w-3 h-3 rounded-full bg-emerald-400"></span>
-                                <span class="text-slate-300">Terra: <strong id="earth-percentage" class="text-emerald-400 text-lg">50%</strong></span>
-                            </div>
-                            <div class="text-center text-xs text-slate-400 font-sans">
-                                Total de Votos: <span id="total-votes-count" class="font-orbitron text-white font-bold">0</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-slate-300">Espaço: <strong id="space-percentage" class="text-purple-400 text-lg">50%</strong></span>
-                                <span class="inline-block w-3 h-3 rounded-full bg-purple-400"></span>
-                            </div>
-                        </div>
-
-                        <!-- Barra de Progresso Dual -->
-                        <div class="h-6 w-full bg-slate-900 rounded-full overflow-hidden p-1 flex border border-slate-800">
-                            <div id="earth-bar" class="h-full bg-gradient-to-r from-emerald-600 to-teal-400 rounded-l-full transition-all duration-700 ease-out" style="width: 50%;"></div>
-                            <div id="space-bar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 rounded-r-full transition-all duration-700 ease-out" style="width: 50%;"></div>
-                        </div>
-                    </div>
-                </div>
+          </li>
+          <li class="arg-item">
+            <div class="arg-icon"><i data-lucide="leaf"></i></div>
+            <div class="arg-content">
+              <h4>Estabilidade Biosférica</h4>
+              <p>Recuperar biomas danificados é tecnicamente mais simples e viável do que terraformar mundos estéreis e hostis.</p>
             </div>
-        </section>
+          </li>
+        </ul>
+      </div>
 
-        <!-- 3. ARGUMENTOS COMPARATIVOS (DEBATES DETALHADOS) -->
-        <section class="py-20 px-6 md:px-12 bg-slate-900/60 border-y border-slate-800/80">
-            <div class="max-w-7xl mx-auto space-y-16">
-                <!-- Header da Seção -->
-                <div class="text-center space-y-3">
-                    <h2 class="font-orbitron text-3xl md:text-4xl font-bold text-white">ARGUMENTOS EM CONTRAPONTO</h2>
-                    <p class="text-slate-400 max-w-xl mx-auto">Compare as perspectivas filosóficas, econômicas e científicas de cada escolha.</p>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <!-- Cards Visão Terra -->
-                    <div id="argumentos-terra" class="space-y-6">
-                        <div class="flex items-center gap-3 pb-3 border-b border-emerald-500/30">
-                            <i class="fa-solid fa-earth-americas text-2xl text-emerald-400"></i>
-                            <h3 class="font-orbitron text-2xl font-bold text-emerald-400">Por que focar na Terra?</h3>
-                        </div>
-
-                        <!-- Card 1 -->
-                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-emerald-500 hover:translate-x-1 transition-transform">
-                            <h4 class="font-bold text-lg text-emerald-200 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-seedling text-emerald-400"></i> O Único Biosistema Conhecido
-                            </h4>
-                            <p class="text-slate-300 text-sm leading-relaxed">
-                                A Terra possui a complexa teia biológica de ar, água e solo perfeita para sustentação da vida. Criar ecossistemas artificiais autossustentáveis no espaço ainda é um desafio imenso e arriscado.
-                            </p>
-                        </div>
-
-                        <!-- Card 2 -->
-                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-emerald-500 hover:translate-x-1 transition-transform">
-                            <h4 class="font-bold text-lg text-emerald-200 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-hand-holding-dollar text-emerald-400"></i> Custo-Benefício e Impacto Imediato
-                            </h4>
-                            <p class="text-slate-300 text-sm leading-relaxed">
-                                Trilhões de dólares gastos em missões espaciais podem resolver imediatamente a fome global, erradicar doenças tropicais e transicionar a matriz energética global para fontes renováveis.
-                            </p>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-emerald-500 hover:translate-x-1 transition-transform">
-                            <h4 class="font-bold text-lg text-emerald-200 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-temperature-arrow-down text-emerald-400"></i> Emergência Climática Urgente
-                            </h4>
-                            <p class="text-slate-300 text-sm leading-relaxed">
-                                O aquecimento global e a perda de biodiversidade são ameaças do presente. Se falharmos em conter a crise climática aqui, não haverá civilização capaz de explorar o universo no futuro.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Cards Visão Espaço -->
-                    <div id="argumentos-espaco" class="space-y-6">
-                        <div class="flex items-center gap-3 pb-3 border-b border-purple-500/30">
-                            <i class="fa-solid fa-shuttle-space text-2xl text-purple-400"></i>
-                            <h3 class="font-orbitron text-2xl font-bold text-purple-400">Por que focar no Espaço?</h3>
-                        </div>
-
-                        <!-- Card 1 -->
-                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500 hover:translate-x-1 transition-transform">
-                            <h4 class="font-bold text-lg text-purple-200 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-shield-halved text-purple-400"></i> Seguro Contra Extinção em Massa
-                            </h4>
-                            <p class="text-slate-300 text-sm leading-relaxed">
-                                Asteroides, supervulcões ou pandemias globais podem dizimar a Terra. Estabelecer colônias em Marte e na Lua garante a continuidade da consciência humana frente a cataclismos.
-                            </p>
-                        </div>
-
-                        <!-- Card 2 -->
-                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500 hover:translate-x-1 transition-transform">
-                            <h4 class="font-bold text-lg text-purple-200 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-microchip text-purple-400"></i> Motor Tecnológico Disruptivo
-                            </h4>
-                            <p class="text-slate-300 text-sm leading-relaxed">
-                                A exploração espacial impulsiona avanços colaterais inacreditáveis em energia solar, purificação de água, medicina robótica e materiais ultrarresistentes que beneficiam a própria Terra.
-                            </p>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500 hover:translate-x-1 transition-transform">
-                            <h4 class="font-bold text-lg text-purple-200 mb-2 flex items-center gap-2">
-                                <i class="fa-solid fa-infinity text-purple-400"></i> Recursos e Expansão Ilimitados
-                            </h4>
-                            <p class="text-slate-300 text-sm leading-relaxed">
-                                A mineração de asteroides oferece acesso quase infinito a metais raros e energia, eliminando a dependência da destruição da crosta terrestre para suprir a demanda industrial.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+      <!-- Visão Espaço -->
+      <div class="arg-column space">
+        <h3 class="arg-column-title" style="color: var(--space-primary);">
+          <i data-lucide="zap"></i> Rota Espaço: Expansão
+        </h3>
+        <ul class="arg-list">
+          <li class="arg-item">
+            <div class="arg-icon"><i data-lucide="shield-alert"></i></div>
+            <div class="arg-content">
+              <h4>Seguro Contra Extinção</h4>
+              <p>Permanecer em um único planeta nos deixa vulneráveis a eventos catastróficos, como asteroides ou guerras globais.</p>
             </div>
-        </section>
-
-        <!-- 4. SEÇÃO DE DEBATE DA COMUNIDADE (COMMENT FEED) -->
-        <section id="comentarios" class="py-24 px-6 md:px-12 bg-slate-950">
-            <div class="max-w-4xl mx-auto space-y-12">
-                <div class="text-center space-y-3">
-                    <h2 class="font-orbitron text-3xl md:text-4xl font-bold text-white">OPINIÃO DA COMUNIDADE</h2>
-                    <p class="text-slate-400">Junte-se à discussão global e defenda o seu ponto de vista com responsabilidade.</p>
-                </div>
-
-                <!-- Form de Comentário -->
-                <div class="glass-panel p-6 md:p-8 rounded-2xl border border-slate-800 shadow-xl">
-                    <form id="comment-form" onsubmit="submitComment(event)" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                            <label class="block text-xs font-orbitron text-slate-300 mb-1">Seu Primeiro Nome</label>
-                            <input type="text" id="comment-author" required placeholder="Ex: Elena" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
-                        </div>
-                        <div>
-                                <label class="block text-xs font-orbitron text-slate-300 mb-1">Sua Posição / Lado</label>
-                                <select id="comment-side" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors">
-                                    <option value="earth">🌍 Visão Terra (Preservação)</option>
-                                    <option value="space">🚀 Visão Espaço (Exploração)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-orbitron text-slate-300 mb-1">Argumento ou Opinião</label>
-                            <textarea id="comment-text" required rows="3" placeholder="Por que você acredita nessa prioridade para a humanidade?" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors resize-none"></textarea>
-                        </div>
-
-                        <button type="submit" class="w-full md:w-auto px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-purple-600 hover:from-emerald-500 hover:to-purple-500 text-white font-orbitron text-sm font-semibold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-paper-plane text-xs"></i> PUBLICAR OPINIÃO
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Feed de Comentários -->
-                <div class="space-y-4" id="comments-container">
-                    <!-- Comentários Injetados por JavaScript -->
-                </div>
+          </li>
+          <li class="arg-item">
+            <div class="arg-icon"><i data-lucide="cpu"></i></div>
+            <div class="arg-content">
+              <h4>Aceleração Tecnológica</h4>
+              <p>Desafios espaciais geram inovações disruptivas em medicina, energia limpa, robótica e purificação de recursos.</p>
             </div>
-        </section>
-    </main>
-
-    <!-- RODAPÉ DA PÁGINA -->
-    <footer class="bg-slate-950 border-t border-slate-800/80 py-12 px-6 md:px-12 text-center text-slate-400 text-sm">
-        <div class="max-w-6xl mx-auto space-y-6">
-            <div class="font-orbitron font-bold text-lg text-slate-200">
-                DILEMA DA HUMANIDADE
+          </li>
+          <li class="arg-item">
+            <div class="arg-icon"><i data-lucide="infinity"></i></div>
+            <div class="arg-content">
+              <h4>Recursos Ilimitados</h4>
+              <p>A mineração extraterrestre em asteroides pode suprir a humanidade com minerais raros sem exaurir a Terra.</p>
             </div>
-            
-            <p class="max-w-xl mx-auto text-xs text-slate-400 leading-relaxed">
-                Este projeto é um espaço interativo de reflexão sobre os rumos da civilização. Quer estejamos destinados aos oceanos da Terra ou às estrelas do cosmos, a preservação do conhecimento e da empatia deve ser nossa prioridade final.
-            </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-            <div class="flex justify-center gap-6 text-slate-400 text-lg">
-                <a href="#" class="hover:text-emerald-400 transition-colors" title="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="#" class="hover:text-purple-400 transition-colors" title="GitHub"><i class="fa-brands fa-github"></i></a>
-                <a href="#" class="hover:text-blue-400 transition-colors" title="Discord"><i class="fa-brands fa-discord"></i></a>
-            </div>
+  <!-- Seção da Comunidade -->
+  <section class="section" id="comunidade">
+    <div class="section-header">
+      <h2 class="section-title">Vozes da Comunidade</h2>
+      <p class="section-desc">Leia a justificativa de outros pensadores ou contribua com seu ponto de vista.</p>
+    </div>
 
-            <div class="text-xs text-slate-400 border-t border-slate-900 pt-6">
-                © <span id="year-span"></span> Dilema da Humanidade. Desenvolvido para inspirar discussões éticas e científicas.
-            </div>
+    <div class="community-box">
+      <form class="comment-form" id="comment-form">
+        <div class="form-row">
+          <input type="text" id="comment-name" placeholder="Seu Nome ou Apelido" required>
+          <select id="comment-side" required>
+            <option value="EARTH">Defendendo: Planeta Terra 🌍</option>
+            <option value="SPACE">Defendendo: Colonização Espacial 🚀</option>
+          </select>
         </div>
-    </footer>
+        <textarea id="comment-text" placeholder="Escreva a justificativa do seu posicionamento..." required></textarea>
+        <button type="submit" class="btn-submit-comment">
+          Publicar Comentário <i data-lucide="send"></i>
+        </button>
+      </form>
 
-    <!-- LOGIC & INTERACTION JAVASCRIPT -->
-    <script>
-        // CLIENTE SUPABASE E GERENCIAMENTO DE ESTADO
-        let supabaseClient = null;
-        let selectedVoteChoice = null; // 'earth' ou 'space'
+      <div class="comments-feed" id="comments-feed">
+        <!-- Comentários Injetados via JS -->
+      </div>
+    </div>
+  </section>
 
-        let voteState = {
-            earth: 542,
-            space: 488,
-            userVoted: null
-        };
+  <!-- Modal de Confirmação de Voto -->
+  <div class="modal-overlay" id="vote-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeVoteModal()"><i data-lucide="x"></i></button>
+      <h3 class="modal-title" id="modal-vote-title">Registrar Escolha</h3>
+      <p class="modal-desc">Informe seu primeiro nome para autenticar o voto. Seus dados permanecem 100% anônimos.</p>
+      
+      <form id="vote-form" onsubmit="submitVote(event)">
+        <input type="text" id="voter-name" placeholder="Ex: Samuel" required style="width: 100%; margin-bottom: 1.5rem;">
+        <button type="submit" class="btn-vote btn-earth" id="modal-submit-btn">Confirmar Voto</button>
+      </form>
+    </div>
+  </div>
 
-        let commentsState = [
-            {
-                id: 1,
-                author: "Marcos",
-                side: "earth",
-                text: "Não existe um 'Planeta B' pronto para habitação imediata. A engenharia necessária para terraformar Marte levaria séculos, enquanto a degradação da Terra pode ser irreversível nas próximas décadas.",
-                date: "Há 2 horas"
-            },
-            {
-                id: 2,
-                author: "Sarah",
-                side: "space",
-                text: "A exploração espacial e a preservação ambiental não se excluem. A tecnologia necessária para sobreviver em Marte nos ensinará a reciclar 100% dos recursos e viver em sintonia rigorosa com o ambiente na Terra.",
-                date: "Há 5 horas"
-            }
-        ];
+  <!-- Rodapé -->
+  <footer>
+    <p class="footer-quote">"O espaço é o futuro da humanidade, mas a Terra é seu berço. Ninguém pode viver no berço para sempre."</p>
+    <p class="footer-copy">&copy; 2026 Dilema da Humanidade. Desenvolvido para reflexão global.</p>
+  </footer>
 
-        // INICIALIZAÇÃO
-        document.addEventListener('DOMContentLoaded', async () => {
-            document.getElementById('year-span').innerText = new Date().getFullYear();
-            initSupabaseFromStorage();
-            await syncDataFromDatabase();
-            updateVoteUI();
-            renderComments();
-            initParticles();
+  <script>
+    /* ==========================================================================
+       CONFIGURAÇÃO DO SUPABASE
+       Cole suas credenciais diretamente abaixo nas duas constantes.
+       ========================================================================== */
+    const SUPABASE_URL = 'SUA_SUPABASE_URL_AQUI';
+    const SUPABASE_ANON_KEY = 'SUA_SUPABASE_ANON_KEY_AQUI';
+
+    let supabase = null;
+    const isConfigured = (SUPABASE_URL !== 'SUA_SUPABASE_URL_AQUI' && SUPABASE_ANON_KEY !== 'SUA_SUPABASE_ANON_KEY_AQUI');
+
+    if (isConfigured) {
+      try {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      } catch (err) {
+        console.warn("Erro ao instanciar o Supabase. Utilizando fallback local.", err);
+      }
+    }
+
+    // Estado da Aplicação
+    let selectedChoice = null;
+    let localVotes = JSON.parse(localStorage.getItem('dilemma_votes_fallback')) || { EARTH: 14, SPACE: 18 };
+    let hasVoted = localStorage.getItem('dilemma_user_has_voted') === 'true';
+
+    /* ==========================================================================
+       INICIALIZAÇÃO DA PÁGINA
+       ========================================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initCanvas();
+      fetchVotes();
+      fetchComments();
+
+      if (hasVoted) {
+        disableVoteButtons();
+      }
+    });
+
+    /* ==========================================================================
+       SISTEMA DE VOTAÇÃO
+       ========================================================================== */
+    function openVoteModal(choice) {
+      if (hasVoted) {
+        alert("Você já registrou seu voto nesta sessão.");
+        return;
+      }
+      selectedChoice = choice;
+      const modal = document.getElementById('vote-modal');
+      const title = document.getElementById('modal-vote-title');
+      const btn = document.getElementById('modal-submit-btn');
+
+      if (choice === 'EARTH') {
+        title.innerText = 'Votar pela Preservação da Terra 🌍';
+        btn.className = 'btn-vote btn-earth';
+      } else {
+        title.innerText = 'Votar pela Colonização do Espaço 🚀';
+        btn.className = 'btn-vote btn-space';
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeVoteModal() {
+      document.getElementById('vote-modal').classList.remove('active');
+    }
+
+    // Geração de Hash Anônimo para o Usuário
+    function generateUserHash(name) {
+      const str = name.toLowerCase().trim() + navigator.userAgent + screen.width;
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash |= 0;
+      }
+      return 'usr_' + Math.abs(hash);
+    }
+
+    async function submitVote(event) {
+      event.preventDefault();
+      const nameInput = document.getElementById('voter-name').value.trim();
+      
+      if (!nameInput) return;
+
+      const userHash = generateUserHash(nameInput);
+
+      if (supabase && isConfigured) {
+        try {
+          const { error } = await supabase
+            .from('public_votes')
+            .insert([{ choice: selectedChoice, voter_first_name: nameInput, user_hash: userHash }]);
+
+          if (error && error.code === '23505') {
+            alert('Atenção: Um voto já foi registrado para este nome no dispositivo.');
+            closeVoteModal();
+            return;
+          }
+        } catch (e) {
+          console.warn("Erro no Supabase, registrando voto localmente.", e);
+          localVotes[selectedChoice]++;
+        }
+      } else {
+        localVotes[selectedChoice]++;
+        localStorage.setItem('dilemma_votes_fallback', JSON.stringify(localVotes));
+      }
+
+      localStorage.setItem('dilemma_user_has_voted', 'true');
+      hasVoted = true;
+
+      disableVoteButtons();
+      closeVoteModal();
+      fetchVotes();
+    }
+
+    function disableVoteButtons() {
+      document.querySelectorAll('.btn-vote').forEach(btn => {
+        if (!btn.classList.contains('btn-submit-comment')) {
+          btn.disabled = true;
+          btn.innerText = 'Voto Registrado ✓';
+        }
+      });
+    }
+
+    async function fetchVotes() {
+      let earthCount = 0;
+      let spaceCount = 0;
+
+      if (supabase && isConfigured) {
+        try {
+          const { data: earthData } = await supabase.from('public_votes').select('id', { count: 'exact' }).eq('choice', 'EARTH');
+          const { data: spaceData } = await supabase.from('public_votes').select('id', { count: 'exact' }).eq('choice', 'SPACE');
+
+          earthCount = earthData ? earthData.length : 0;
+          spaceCount = spaceData ? spaceData.length : 0;
+        } catch (e) {
+          earthCount = localVotes.EARTH;
+          spaceCount = localVotes.SPACE;
+        }
+      } else {
+        earthCount = localVotes.EARTH;
+        spaceCount = localVotes.SPACE;
+      }
+
+      const total = earthCount + spaceCount;
+      const earthPct = total > 0 ? Math.round((earthCount / total) * 100) : 50;
+      const spacePct = total > 0 ? (100 - earthPct) : 50;
+
+      document.getElementById('earth-pct').innerText = `${earthPct}%`;
+      document.getElementById('space-pct').innerText = `${spacePct}%`;
+      document.getElementById('earth-bar').style.width = `${earthPct}%`;
+      document.getElementById('space-bar').style.width = `${spacePct}%`;
+      document.getElementById('total-votes-label').innerText = total;
+    }
+
+    /* ==========================================================================
+       SISTEMA DE COMENTÁRIOS
+       ========================================================================== */
+    document.getElementById('comment-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('comment-name').value.trim();
+      const side = document.getElementById('comment-side').value;
+      const text = document.getElementById('comment-text').value.trim();
+
+      if (!name || !text) return;
+
+      const newComment = {
+        author_name: name,
+        choice_tag: side,
+        content: text,
+        created_at: new Date().toISOString()
+      };
+
+      if (supabase && isConfigured) {
+        try {
+          await supabase.from('public_comments').insert([newComment]);
+        } catch (err) {
+          console.warn("Erro ao publicar comentário via Supabase.", err);
+        }
+      }
+
+      // Adiciona na UI imediatamente
+      renderSingleComment(newComment, true);
+      document.getElementById('comment-form').reset();
+    });
+
+    async function fetchComments() {
+      let comments = [
+        { author_name: 'Helena Rocha', choice_tag: 'EARTH', content: 'Não existe plano B para a biologia. Investir no espaço antes de salvar a Terra é abandonar o nosso único lar seguro.' },
+        { author_name: 'Dr. Marcus Vance', choice_tag: 'SPACE', content: 'A história nos ensina que a expansão impulsiona a sobrevivência. Se continuarmos presos a um único planeta, nossa extinção é apenas uma questão de tempo.' }
+      ];
+
+      if (supabase && isConfigured) {
+        try {
+          const { data, error } = await supabase.from('public_comments').select('*').order('created_at', { ascending: false }).limit(10);
+          if (data && data.length > 0) {
+            comments = data;
+          }
+        } catch (e) {
+          console.warn("Utilizando comentários padrão de fallback.");
+        }
+      }
+
+      const feed = document.getElementById('comments-feed');
+      feed.innerHTML = '';
+      comments.forEach(c => renderSingleComment(c, false));
+    }
+
+    function renderSingleComment(comment, prepend = false) {
+      const feed = document.getElementById('comments-feed');
+      const card = document.createElement('div');
+      card.className = 'comment-card';
+
+      const tagClass = comment.choice_tag === 'EARTH' ? 'earth' : 'space';
+      const tagLabel = comment.choice_tag === 'EARTH' ? 'Planeta Terra 🌍' : 'Colonização Espacial 🚀';
+
+      card.innerHTML = `
+        <div class="comment-header">
+          <span class="comment-author">${escapeHtml(comment.author_name)}</span>
+          <span class="comment-tag ${tagClass}">${tagLabel}</span>
+        </div>
+        <p class="comment-body">${escapeHtml(comment.content)}</p>
+      `;
+
+      if (prepend) {
+        feed.prepend(card);
+      } else {
+        feed.appendChild(card);
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[m]));
+    }
+
+    /* ==========================================================================
+       CANVAS ANIMADO (POEIRA CÓSMICA / ORGÂNICA)
+       ========================================================================== */
+    function initCanvas() {
+      const canvas = document.getElementById('space-canvas');
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      const particles = [];
+      const particleCount = Math.floor((width * height) / 15000);
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          radius: Math.random() * 1.5 + 0.5,
+          color: Math.random() > 0.5 ? 'rgba(16, 185, 129, ' : 'rgba(139, 92, 246, ',
+          alpha: Math.random() * 0.6 + 0.1,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+          if (p.y < 0) p.y = height;
+          if (p.y > height) p.y = 0;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color + p.alpha + ')';
+          ctx.fill();
         });
 
-        // Efetuar Conexão com Supabase
-        function initSupabaseFromStorage() {
-            const url = localStorage.getItem('supabase_url');
-            const key = localStorage.getItem('supabase_key');
+        requestAnimationFrame(animate);
+      }
 
-            if (url && key && window.supabase) {
-                try {
-                    supabaseClient = window.supabase.createClient(url, key);
-                    document.getElementById('supabase-url').value = url;
-                    document.getElementById('supabase-key').value = key;
-                    updateSupabaseStatusUI(true);
-                } catch (err) {
-                    console.error("Erro ao inicializar Supabase:", err);
-                    updateSupabaseStatusUI(false);
-                }
-            } else {
-                updateSupabaseStatusUI(false);
-            }
+      animate();
 
-            // Verificar se o usuário já votou neste navegador
-            const userVoteLocal = localStorage.getItem('user_vote_choice');
-            if (userVoteLocal) {
-                voteState.userVoted = userVoteLocal;
-            }
-        }
-
-        function updateSupabaseStatusUI(isConnected) {
-            const badge = document.getElementById('connection-status-badge');
-            const text = document.getElementById('status-mode-text');
-
-            if (isConnected) {
-                badge.className = "p-3 rounded-lg text-xs font-semibold flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 text-emerald-300";
-                text.innerText = "Conectado com Sucesso ao Banco de Dados Supabase";
-            } else {
-                badge.className = "p-3 rounded-lg text-xs font-semibold flex items-center justify-between bg-amber-500/10 border border-amber-500/30 text-amber-300";
-                text.innerText = "Modo Local / Fallback (Supabase não configurado)";
-            }
-        }
-
-        function saveSupabaseCredentials() {
-            const url = document.getElementById('supabase-url').value.trim();
-            const key = document.getElementById('supabase-key').value.trim();
-
-            if (!url || !key) {
-                showToast("Por favor, preencha a URL e a Anon Key do Supabase.", "⚠️");
-                return;
-            }
-
-            localStorage.setItem('supabase_url', url);
-            localStorage.setItem('supabase_key', key);
-
-            initSupabaseFromStorage();
-            syncDataFromDatabase();
-            toggleSupabaseModal();
-            showToast("Credenciais do Supabase salvas!", "⚡");
-        }
-
-        // SINCRONIZAÇÃO DE DADOS (SUPABASE OU LOCAL)
-        async function syncDataFromDatabase() {
-            if (supabaseClient) {
-                try {
-                    // Buscar Contagem de Votos
-                    const { data: votesData, error: votesError } = await supabaseClient
-                        .from('public_votes')
-                        .select('choice');
-
-                    if (!votesError && votesData) {
-                        let eCount = 0;
-                        let sCount = 0;
-                        votesData.forEach(v => {
-                            if (v.choice === 'earth') eCount++;
-                            if (v.choice === 'space') sCount++;
-                        });
-                        voteState.earth = eCount;
-                        voteState.space = sCount;
-                    }
-
-                    // Buscar Comentários
-                    const { data: commentsData, error: commentsError } = await supabaseClient
-                        .from('public_comments')
-                        .select('*')
-                        .order('created_at', { ascending: false });
-
-                    if (!commentsError && commentsData && commentsData.length > 0) {
-                        commentsState = commentsData.map(c => ({
-                            id: c.id,
-                            author: c.first_name,
-                            side: c.category,
-                            text: c.comment,
-                            date: new Date(c.created_at).toLocaleDateString('pt-BR')
-                        }));
-                    }
-                } catch (e) {
-                    console.warn("Falha na sincronização via Supabase, usando cache local.", e);
-                }
-            } else {
-                // Fallback LocalStorage
-                const savedVotes = localStorage.getItem('dilema_votes_fallback');
-                if (savedVotes) {
-                    const parsed = JSON.parse(savedVotes);
-                    voteState.earth = parsed.earth || voteState.earth;
-                    voteState.space = parsed.space || voteState.space;
-                }
-            }
-            updateVoteUI();
-            renderComments();
-        }
-
-        // FINGERPRINT ANÔNIMO (USER-AGENT + SCREEN + CANVAS + FIRST NAME)
-        function generateAnonymousFingerprint(firstName) {
-            const rawString = [
-                firstName.toLowerCase().trim(),
-                navigator.userAgent,
-                screen.width + "x" + screen.height,
-                new Date().getTimezoneOffset()
-            ].join('|');
-
-            let hash = 0;
-            for (let i = 0; i < rawString.length; i++) {
-                const char = rawString.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash |= 0;
-            }
-            return 'fp_' + Math.abs(hash);
-        }
-
-        // FLUXO DE VOTAÇÃO COM MODAL DE NOME
-        function openVoteModal(choice) {
-            if (voteState.userVoted) {
-                showToast(`Você já votou na ${voteState.userVoted === 'earth' ? 'Visão Terra 🌍' : 'Visão Espaço 🚀'}.`, "ℹ️");
-                return;
-            }
-
-            selectedVoteChoice = choice;
-            const modal = document.getElementById('vote-modal');
-            const title = document.getElementById('vote-modal-title');
-            const icon = document.getElementById('vote-modal-icon');
-            const btnSubmit = document.getElementById('btn-confirm-vote-submit');
-
-            if (choice === 'earth') {
-                title.innerText = "Confirmar Voto: Restaurar a Terra";
-                icon.innerText = "🌍";
-                btnSubmit.className = "w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg active:scale-95 bg-emerald-600 hover:bg-emerald-500";
-            } else {
-                title.innerText = "Confirmar Voto: Colonizar o Espaço";
-                icon.innerText = "🚀";
-                btnSubmit.className = "w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg active:scale-95 bg-purple-600 hover:bg-purple-500";
-            }
-
-            modal.classList.remove('hidden');
-        }
-
-        function closeVoteModal() {
-            document.getElementById('vote-modal').classList.add('hidden');
-        }
-
-        async function confirmVote(e) {
-            e.preventDefault();
-            const firstNameInput = document.getElementById('voter-first-name');
-            const firstName = firstNameInput.value.trim();
-
-            if (!firstName) {
-                showToast("Por favor, digite seu primeiro nome.", "⚠️");
-                return;
-            }
-
-            const fingerprint = generateAnonymousFingerprint(firstName);
-
-            if (supabaseClient) {
-                try {
-                    const { error } = await supabaseClient
-                        .from('public_votes')
-                        .insert([
-                            {
-                                first_name: firstName,
-                                choice: selectedVoteChoice,
-                                fingerprint: fingerprint
-                            }
-                        ]);
-
-                    if (error) {
-                        if (error.code === '23505') { // Postgres Unique Constraint Error
-                            showToast("Um voto já foi registrado para este perfil/navegador.", "⚠️");
-                            closeVoteModal();
-                            return;
-                        }
-                        console.error("Erro no Supabase ao votar:", error);
-                    }
-                } catch (err) {
-                    console.error("Erro inesperado no Supabase:", err);
-                }
-            }
-
-            // Atualização Local
-            if (selectedVoteChoice === 'earth') {
-                voteState.earth++;
-            } else {
-                voteState.space++;
-            }
-
-            voteState.userVoted = selectedVoteChoice;
-            localStorage.setItem('user_vote_choice', selectedVoteChoice);
-            localStorage.setItem('dilema_votes_fallback', JSON.stringify({
-                earth: voteState.earth,
-                space: voteState.space
-            }));
-
-            closeVoteModal();
-            updateVoteUI();
-            showToast(`Voto registrado com sucesso para ${firstName}!`, "🎉");
-        }
-
-        // SUBMETER COMENTÁRIO (SUPABASE / LOCAL)
-        async function submitComment(e) {
-            e.preventDefault();
-            const authorInput = document.getElementById('comment-author');
-            const sideInput = document.getElementById('comment-side');
-            const textInput = document.getElementById('comment-text');
-
-            const firstName = authorInput.value.trim();
-            const category = sideInput.value;
-            const text = textInput.value.trim();
-
-            if (!firstName || !text) return;
-
-            if (supabaseClient) {
-                try {
-                    const { error } = await supabaseClient
-                        .from('public_comments')
-                        .insert([
-                            {
-                                first_name: firstName,
-                                category: category,
-                                comment: text
-                            }
-                        ]);
-
-                    if (error) console.error("Erro ao publicar comentário no Supabase:", error);
-                } catch (err) {
-                    console.error("Falha ao salvar no Supabase:", err);
-                }
-            }
-
-            // Atualizar UI Localmente
-            commentsState.unshift({
-                id: Date.now(),
-                author: firstName,
-                side: category,
-                text: text,
-                date: "Agora mesmo"
-            });
-
-            textInput.value = '';
-            renderComments();
-            showToast("Opinião publicada com sucesso!", "💬");
-        }
-
-        // ATUALIZAR INTERFACE
-        function updateVoteUI() {
-            const total = voteState.earth + voteState.space;
-            const earthPct = total > 0 ? Math.round((voteState.earth / total) * 100) : 50;
-            const spacePct = total > 0 ? 100 - earthPct : 50;
-
-            document.getElementById('total-votes-count').innerText = total.toLocaleString('pt-BR');
-            document.getElementById('earth-percentage').innerText = `${earthPct}%`;
-            document.getElementById('space-percentage').innerText = `${spacePct}%`;
-
-            document.getElementById('earth-bar').style.width = `${earthPct}%`;
-            document.getElementById('space-bar').style.width = `${spacePct}%`;
-
-            const btnEarth = document.getElementById('btn-vote-earth');
-            const btnSpace = document.getElementById('btn-vote-space');
-
-            if (voteState.userVoted === 'earth') {
-                btnEarth.classList.add('ring-4', 'ring-emerald-500', 'earth-pulse-active');
-                btnSpace.classList.add('opacity-60');
-            } else if (voteState.userVoted === 'space') {
-                btnSpace.classList.add('ring-4', 'ring-purple-500', 'space-pulse-active');
-                btnEarth.classList.add('opacity-60');
-            }
-        }
-
-        function renderComments() {
-            const container = document.getElementById('comments-container');
-            container.innerHTML = '';
-
-            commentsState.forEach(item => {
-                const isEarth = item.side === 'earth';
-                const badgeBg = isEarth ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-                const badgeLabel = isEarth ? '🌍 PLANETA TERRA' : '🚀 ESPAÇO';
-                const borderHover = isEarth ? 'hover:border-emerald-500/40' : 'hover:border-purple-500/40';
-
-                const commentCard = document.createElement('div');
-                commentCard.className = `glass-panel p-6 rounded-xl border border-slate-800 transition-all ${borderHover} space-y-3`;
-                commentCard.innerHTML = `
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-xs font-orbitron text-slate-300">
-                                ${escapeHtml(item.author).charAt(0).toUpperCase()}
-                            </div>
-                            <span class="font-bold text-sm text-slate-200">${escapeHtml(item.author)}</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs text-slate-400">${item.date}</span>
-                            <span class="text-[10px] font-orbitron px-2.5 py-1 rounded-full border ${badgeBg}">${badgeLabel}</span>
-                        </div>
-                    </div>
-                    <p class="text-sm text-slate-300 leading-relaxed">${escapeHtml(item.text)}</p>
-                `;
-                container.appendChild(commentCard);
-            });
-        }
-
-        // UTILITÁRIOS: MODAIS E TOASTS
-        function toggleSupabaseModal() {
-            const modal = document.getElementById('supabase-modal');
-            modal.classList.toggle('hidden');
-        }
-
-        function copySQLScript() {
-            const sqlText = `CREATE TABLE IF NOT EXISTS public_votes (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  first_name TEXT NOT NULL,
-  choice TEXT NOT NULL,
-  fingerprint TEXT NOT NULL UNIQUE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS public_comments (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  first_name TEXT NOT NULL,
-  category TEXT NOT NULL,
-  comment TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
-ALTER TABLE public_votes ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Leitura publica de votos" ON public_votes FOR SELECT USING (true);
-CREATE POLICY "Inserção publica de votos" ON public_votes FOR INSERT WITH CHECK (true);
-
-ALTER TABLE public_comments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Leitura publica de comentários" ON public_comments FOR SELECT USING (true);
-CREATE POLICY "Inserção publica de comentários" ON public_comments FOR INSERT WITH CHECK (true);`;
-
-            navigator.clipboard.writeText(sqlText).then(() => {
-                showToast("Script SQL copiado com sucesso!", "📋");
-            }).catch(() => {
-                showToast("Selecione o texto e copie manualmente.", "⚠️");
-            });
-        }
-
-        function showToast(message, icon = "ℹ️") {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-icon').innerText = icon;
-            document.getElementById('toast-message').innerText = message;
-
-            toast.classList.remove('translate-y-24', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-24', 'opacity-0');
-            }, 3500);
-        }
-
-        function escapeHtml(text) {
-            return String(text).replace(/[&<>"']/g, function(m) {
-                return {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                }[m];
-            });
-        }
-
-        // CANVAS PARTICLES
-        function initParticles() {
-            const canvas = document.getElementById('particles-canvas');
-            const ctx = canvas.getContext('2d');
-
-            function resize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            resize();
-            window.addEventListener('resize', resize);
-
-            const particles = [];
-            const particleCount = 45;
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 1.8 + 0.5,
-                    color: Math.random() > 0.5 ? 'rgba(16, 185, 129, ' : 'rgba(168, 85, 247, ',
-                    alpha: Math.random() * 0.6 + 0.2,
-                    speedX: (Math.random() - 0.5) * 0.3,
-                    speedY: (Math.random() - 0.5) * 0.3
-                });
-            }
-
-            function animateParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {
-                    p.x += p.speedX;
-                    p.y += p.speedY;
-
-                    if (p.x < 0) p.x = canvas.width;
-                    if (p.x > canvas.width) p.x = 0;
-                    if (p.y < 0) p.y = canvas.height;
-                    if (p.y > canvas.height) p.y = 0;
-
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color + p.alpha + ')';
-                    ctx.fill();
-                });
-                requestAnimationFrame(animateParticles);
-            }
-            animateParticles();
-        }
-    </script>
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+    }
+  </script>
 </body>
 </html>
