@@ -35,8 +35,6 @@
 
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase JS Client CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         ::-webkit-scrollbar { width: 8px; }
@@ -291,18 +289,7 @@
 
     <script>
         const SUPABASE_URL = 'https://wfvryvzknbzvqfrqlysn.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_3uHRwplEvjjAjMHk1dYsPw_oBhcq6F8';
-
-        let supabase = null;
-        try {
-            if (window.supabase && SUPABASE_URL.startsWith('http')) {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-                    auth: { persistSession: false }
-                });
-            }
-        } catch (err) {
-            console.warn("Modo de fallback híbrido ativado.");
-        }
+        const SUPABASE_KEY = 'sb_publishable_3uHRwplEvjjAjMHk1dYsPw_oBhcq6F8';
 
         let currentVoteChoice = null;
         let hasUserVoted = localStorage.getItem('dilemma_has_voted') === 'true';
@@ -370,6 +357,27 @@
             document.getElementById('vote-modal').classList.add('hidden');
         }
 
+        // Função de envio REST nativa (bypassa qualquer incompatibilidade de SDK)
+        async function supabaseFetch(endpoint, method = 'GET', body = null) {
+            const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
+            const headers = {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            };
+
+            const options = { method, headers };
+            if (body) options.body = JSON.stringify(body);
+
+            const res = await fetch(url, options);
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(errText);
+            }
+            return await res.json();
+        }
+
         async function confirmVote(event) {
             event.preventDefault();
             const firstNameInput = document.getElementById('voter-first-name');
@@ -377,25 +385,19 @@
             const firstName = firstNameInput.value.trim();
             if (!firstName) return;
 
-            let voteSaved = false;
+            const fingerprint = 'anon_' + Math.abs(firstName.toLowerCase().split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a|0},0)) + '_' + Math.floor(Math.random()*10000);
 
-            // Tenta enviar para o Supabase se disponível
-            if (supabase) {
-                try {
-                    const { error } = await supabase
-                        .from('public_votes')
-                        .insert([{ first_name: firstName, choice: currentVoteChoice, fingerprint: 'fp_' + Date.now() }]);
-                    if (!error) voteSaved = true;
-                } catch (e) {
-                    console.warn("Supabase offline, usando persistência local.");
-                }
+            try {
+                await supabaseFetch('public_votes', 'POST', [{
+                    first_name: firstName,
+                    choice: currentVoteChoice,
+                    fingerprint: fingerprint
+                }]);
+            } catch (err) {
+                console.warn("Erro ao salvar voto no Supabase, registrando localmente:", err);
             }
 
-            // Armazenamento local híbrido (garante funcionamento imediato)
-            let localVotes = JSON.parse(localStorage.getItem('dilemma_hybrid_votes')) || { earth: 14, space: 16 };
-            localVotes[currentVoteChoice]++;
-            localStorage.setItem('dilemma_hybrid_votes', JSON.stringify(localVotes));
-
+            // Atualiza localstorage para proibir duplo voto no navegador
             localStorage.setItem('dilemma_has_voted', 'true');
             localStorage.setItem('dilemma_voted_choice', currentVoteChoice);
             hasUserVoted = true;
@@ -410,23 +412,15 @@
         async function loadVotesData() {
             let eCount = 0;
             let sCount = 0;
-            let fetched = false;
 
-            if (supabase) {
-                try {
-                    const { data, error } = await supabase.from('public_votes').select('choice');
-                    if (!error && data && data.length > 0) {
-                        eCount = data.filter(v => v.choice === 'earth').length;
-                        sCount = data.filter(v => v.choice === 'space').length;
-                        fetched = true;
-                    }
-                } catch (e) {}
-            }
-
-            if (!fetched) {
-                let localVotes = JSON.parse(localStorage.getItem('dilemma_hybrid_votes')) || { earth: 14, space: 16 };
-                eCount = localVotes.earth;
-                sCount = localVotes.space;
+            try {
+                const votes = await supabaseFetch('public_votes?select=choice');
+                if (Array.isArray(votes)) {
+                    eCount = votes.filter(v => v.choice === 'earth').length;
+                    sCount = votes.filter(v => v.choice === 'space').length;
+                }
+            } catch (err) {
+                console.warn("Falha ao buscar contagem via API REST:", err);
             }
 
             const total = eCount + sCount;
@@ -447,22 +441,15 @@
             const text = document.getElementById('comment-text').value.trim();
             if (!name || !text) return;
 
-            const newComment = {
-                first_name: name,
-                category: category,
-                comment: text,
-                created_at: new Date().toISOString()
-            };
-
-            if (supabase) {
-                try {
-                    await supabase.from('public_comments').insert([newComment]);
-                } catch (e) {}
+            try {
+                await supabaseFetch('public_comments', 'POST', [{
+                    first_name: name,
+                    category: category,
+                    comment: text
+                }]);
+            } catch (err) {
+                console.warn("Falha ao publicar comentário no Supabase:", err);
             }
-
-            let localComments = JSON.parse(localStorage.getItem('dilemma_hybrid_comments')) || [];
-            localComments.unshift(newComment);
-            localStorage.setItem('dilemma_hybrid_comments', JSON.stringify(localComments));
 
             document.getElementById('comment-form').reset();
             showToast('Argumento publicado com sucesso!', '💬');
@@ -474,23 +461,14 @@
             if (!container) return;
             let comments = [];
 
-            if (supabase) {
-                try {
-                    const { data, error } = await supabase
-                        .from('public_comments')
-                        .select('*')
-                        .order('created_at', { ascending: false })
-                        .limit(20);
-                    if (!error && data) comments = data;
-                } catch (e) {}
-            }
-
-            if (comments.length === 0) {
-                comments = JSON.parse(localStorage.getItem('dilemma_hybrid_comments')) || [];
+            try {
+                comments = await supabaseFetch('public_comments?select=*&order=created_at.desc&limit=20');
+            } catch (err) {
+                console.warn("Falha ao buscar comentários:", err);
             }
 
             container.innerHTML = '';
-            if (comments.length === 0) {
+            if (!Array.isArray(comments) || comments.length === 0) {
                 container.innerHTML = `<div class="glass-panel p-6 rounded-xl text-center text-slate-400 text-sm border border-slate-800">Nenhum comentário publicado ainda. Seja o primeiro a opinar!</div>`;
                 return;
             }
