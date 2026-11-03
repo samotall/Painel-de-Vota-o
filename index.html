@@ -1,391 +1,730 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Dilema da Humanidade — Terra ou Espaço?</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-/* ===== Tokens ===== */
-:root{
-  --earth:#2ecc71; --earth-2:#0e7c86; --earth-dark:#06281c;
-  --space:#a855f7; --space-2:#22d3ee; --space-dark:#07041a;
-  --bg:#05060f; --text:#eaf0f7; --muted:#9aa7b8; --card:rgba(255,255,255,.05);
-  --font-title:'Orbitron','Segoe UI',system-ui,sans-serif;
-  --font-body:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
-  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-}
-html{scroll-behavior:smooth; scroll-padding-top:calc(76px + env(safe-area-inset-top,0px));}
-*,*::before,*::after{box-sizing:inherit}
-body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;overflow-x:hidden}
-h1,h2,h3{font-family:var(--font-title);margin:0;line-height:1.15}
-section{padding:80px 6vw;max-width:1200px;margin:0 auto}
-.sec-title{font-size:clamp(1.5rem,4vw,2.3rem);text-align:center;margin-bottom:12px}
-.sec-sub{text-align:center;color:var(--muted);max-width:640px;margin:0 auto 40px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilema da Humanidade: Vida na Terra vs. Vida no Espaço</title>
 
-/* ===== Header ===== */
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;display:flex;justify-content:space-between;align-items:center;
-  padding:14px 6vw;background:rgba(5,6,15,.78);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08)}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:rgba(5,6,15,.9);z-index:60}
-.logo{font-family:var(--font-title);font-weight:900;font-size:1.05rem;letter-spacing:1px;
-  background:linear-gradient(90deg,var(--earth),var(--space-2),var(--space));-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
-nav{display:flex;gap:6px;flex-wrap:wrap}
-nav a{color:var(--text);text-decoration:none;font-size:.85rem;padding:8px 12px;border-radius:99px;transition:.25s}
-nav a:hover{background:rgba(255,255,255,.1);box-shadow:0 0 14px rgba(34,211,238,.35)}
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 
-/* ===== Hero split ===== */
-.hero{position:relative;display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 62px);max-width:none;padding:0}
-.side{position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:6vw 5vw 9vh;overflow:hidden;transition:flex .4s, filter .4s}
-.side h2{font-size:clamp(1.3rem,3vw,2rem);margin-bottom:10px}
-.side p{max-width:380px;color:#d3dde8;margin:0 0 14px}
-.side ul{list-style:none;padding:0;margin:0;display:flex;gap:8px;flex-wrap:wrap}
-.side li{font-size:.78rem;padding:5px 12px;border-radius:99px;border:1px solid currentColor}
-.hero-earth{background:
-  radial-gradient(circle at 25% 20%,rgba(46,204,113,.45),transparent 55%),
-  radial-gradient(circle at 70% 85%,rgba(14,124,134,.6),transparent 60%),
-  linear-gradient(160deg,#0b3d2e,#0e6b6f 55%,#4a3520);color:var(--earth)}
-.hero-earth h2{color:#b9f5d0;text-shadow:0 0 18px rgba(46,204,113,.6)}
-.hero-space{background:
-  radial-gradient(circle at 75% 25%,rgba(168,85,247,.55),transparent 55%),
-  radial-gradient(circle at 20% 80%,rgba(34,211,238,.3),transparent 55%),
-  linear-gradient(200deg,#120533,#07041a 60%,#000);color:var(--space-2)}
-.hero-space h2{color:#e3c8ff;text-shadow:0 0 18px rgba(168,85,247,.8)}
-.hero-space::before{content:"";position:absolute;inset:0;opacity:.8;
-  background-image:radial-gradient(1.5px 1.5px at 20px 30px,#fff,transparent),radial-gradient(1px 1px at 90px 120px,#fff,transparent),
-  radial-gradient(1.5px 1.5px at 160px 60px,#c9a8ff,transparent),radial-gradient(1px 1px at 230px 170px,#9ff,transparent);
-  background-size:260px 200px;animation:twinkle 4s infinite alternate}
-@keyframes twinkle{to{opacity:.35}}
-.side > *{position:relative}
-.planet{position:absolute!important;right:-70px;top:12%;width:230px;height:230px;border-radius:50%;
-  background:radial-gradient(circle at 30% 30%,#ff9a6b,#c2410c 55%,#431407);box-shadow:0 0 60px rgba(255,120,60,.5);animation:float 7s ease-in-out infinite}
-.leaf{position:absolute!important;left:-60px;top:12%;width:230px;height:230px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#7ee8a8,#0e7c86 55%,#06281c);box-shadow:0 0 60px rgba(46,204,113,.5);animation:float 8s ease-in-out infinite}
-@keyframes float{50%{transform:translateY(-16px)}}
-.side:hover{filter:brightness(1.15)}
-.hero-center{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:5;text-align:center;width:min(640px,88vw);
-  padding:28px 22px;background:rgba(5,6,15,.62);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18);border-radius:22px;box-shadow:0 0 40px rgba(0,0,0,.5)}
-.hero-center h1{font-size:clamp(1.4rem,4vw,2.6rem);margin-bottom:12px}
-.hero-center p{margin:0 0 18px;color:var(--muted)}
-.vs{font-family:var(--font-title);color:#fff;text-shadow:0 0 16px var(--space-2)}
-.cta{display:inline-block;padding:13px 28px;border-radius:99px;font-weight:600;color:#fff;text-decoration:none;
-  background:linear-gradient(90deg,var(--earth-2),var(--space));transition:.3s;box-shadow:0 0 18px rgba(168,85,247,.5)}
-.cta:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 0 32px rgba(34,211,238,.7)}
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        orbitron: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        earth: {
+                            base: '#064e3b',
+                            accent: '#10b981',
+                            glow: '#059669',
+                            ocean: '#0284c7',
+                        },
+                        space: {
+                            base: '#1e1b4b',
+                            accent: '#a855f7',
+                            glow: '#d946ef',
+                            neon: '#38bdf8',
+                        }
+                    },
+                    boxShadow: {
+                        'earth-glow': '0 0 25px rgba(16, 185, 129, 0.4)',
+                        'space-glow': '0 0 25px rgba(168, 85, 247, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
 
-/* ===== Votação ===== */
-.vote-q{font-size:clamp(1.2rem,3vw,1.7rem);text-align:center;max-width:760px;margin:0 auto 34px}
-.vote-btns{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-.vote-btn{border:2px solid transparent;border-radius:24px;padding:42px 20px;color:#fff;cursor:pointer;font-family:var(--font-title);
-  font-size:clamp(1rem,2.4vw,1.4rem);display:flex;flex-direction:column;align-items:center;gap:12px;transition:transform .3s,box-shadow .3s,opacity .3s}
-.vote-btn .emoji{font-size:3.2rem;transition:transform .4s}
-.vote-btn:hover:not(:disabled){transform:translateY(-6px) scale(1.03)}
-.vote-btn:hover:not(:disabled) .emoji{transform:scale(1.25) rotate(-8deg)}
-.vote-btn:disabled{cursor:default;opacity:.5}
-.vote-btn.chosen{opacity:1;animation:pop .6s}
-.btn-earth{background:linear-gradient(145deg,#0b5d3e,#0e7c86);border-color:var(--earth);box-shadow:0 0 22px rgba(46,204,113,.35)}
-.btn-earth:hover:not(:disabled){box-shadow:0 0 40px rgba(46,204,113,.8)}
-.btn-space{background:linear-gradient(145deg,#2a0a5e,#4c1d95);border-color:var(--space);box-shadow:0 0 22px rgba(168,85,247,.4)}
-.btn-space:hover:not(:disabled){box-shadow:0 0 40px rgba(168,85,247,.9)}
-@keyframes pop{40%{transform:scale(1.08)}}
-.thanks{text-align:center;margin-top:18px;min-height:1.6em;color:var(--space-2)}
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-/* ===== Resultados ===== */
-.results{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:30px;max-width:820px;margin:0 auto}
-.bar{display:flex;height:46px;border-radius:99px;overflow:hidden;background:#111;margin:18px 0}
-.bar > div{display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
-.bar-earth{background:linear-gradient(90deg,var(--earth-2),var(--earth));color:#032015;width:50%}
-.bar-space{background:linear-gradient(90deg,var(--space),#6d28d9);width:50%}
-.legend{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted);flex-wrap:wrap;gap:6px}
-.total{text-align:center;font-family:var(--font-title);font-size:1.3rem;margin-top:14px}
-.locked{text-align:center;color:var(--muted)}
-.hidden{display:none!important}
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
 
-/* ===== Argumentos ===== */
-.args{max-width:none;padding:80px 6vw}
-.args.earth{background:linear-gradient(180deg,var(--bg),#07241b 50%,var(--bg))}
-.args.space{background:linear-gradient(180deg,var(--bg),#10062b 50%,var(--bg))}
-.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;max-width:1100px;margin:0 auto}
-.card{padding:28px;border-radius:20px;background:var(--card);border:1px solid rgba(255,255,255,.1);transition:transform .3s,box-shadow .3s,border-color .3s}
-.card .ic{font-size:2.2rem;margin-bottom:8px}
-.card h3{font-size:1.05rem;margin-bottom:8px}
-.card p{margin:0;color:var(--muted);font-size:.95rem}
-.earth .card:hover{transform:translateY(-8px);border-color:var(--earth);box-shadow:0 0 28px rgba(46,204,113,.4)}
-.space .card:hover{transform:translateY(-8px);border-color:var(--space);box-shadow:0 0 28px rgba(168,85,247,.5)}
-.earth .sec-title{color:#b9f5d0}.space .sec-title{color:#e3c8ff}
+        /* Hero Split Screen Effects */
+        .split-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            overflow: hidden;
+        }
 
-/* ===== Comentários ===== */
-.form{display:grid;gap:12px;max-width:720px;margin:0 auto 26px}
-.form input,.form textarea,.form select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.18);
-  background:rgba(255,255,255,.06);color:var(--text);font:inherit}
-.form select option{color:#111}
-.form input:focus,.form textarea:focus,.form select:focus{outline:none;border-color:var(--space-2);box-shadow:0 0 14px rgba(34,211,238,.4)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.filters{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
-.chip{padding:8px 18px;border-radius:99px;border:1px solid rgba(255,255,255,.2);background:none;color:var(--text);cursor:pointer;font:inherit;transition:.25s}
-.chip:hover,.chip.on{background:rgba(255,255,255,.14);box-shadow:0 0 14px rgba(34,211,238,.4)}
-.comments{display:grid;gap:14px;max-width:720px;margin:0 auto}
-.comment{padding:16px 18px;border-radius:16px;background:var(--card);border-left:4px solid;animation:slide .5s}
-.comment.t{border-color:var(--earth)}.comment.s{border-color:var(--space)}
-.comment .meta{display:flex;justify-content:space-between;gap:8px;font-size:.8rem;margin-bottom:6px;color:var(--muted)}
-.tag{padding:2px 10px;border-radius:99px;font-size:.72rem;font-weight:600}
-.tag.t{background:rgba(46,204,113,.2);color:#8ff0b6}.tag.s{background:rgba(168,85,247,.25);color:#e0c2ff}
-.comment p{margin:0;overflow-wrap:anywhere}
-@keyframes slide{from{opacity:0;transform:translateY(14px)}}
+        .split-side {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+        }
 
-/* ===== Footer ===== */
-footer{text-align:center;padding:60px 6vw 40px;border-top:1px solid rgba(255,255,255,.1);background:linear-gradient(90deg,rgba(14,124,134,.15),rgba(168,85,247,.15))}
-footer blockquote{margin:0 auto 24px;max-width:640px;font-family:var(--font-title);font-size:clamp(1rem,2.5vw,1.35rem)}
-footer .social a{color:var(--text);margin:0 10px;text-decoration:none;transition:.25s}
-footer .social a:hover{color:var(--space-2);text-shadow:0 0 12px var(--space-2)}
-footer small{display:block;margin-top:18px;color:var(--muted)}
+        @media (max-width: 768px) {
+            .split-side {
+                position: relative;
+                width: 100% !important;
+                min-height: 50vh;
+            }
+        }
 
-/* ===== Responsivo ===== */
-@media (max-width:820px){
-  .hero{grid-template-columns:1fr;min-height:auto}
-  .side{min-height:42vh;padding:50px 6vw 30px}
-  .hero-center{position:relative;left:auto;top:auto;transform:none;order:-1;margin:24px auto -20px;width:90%}
-  .hero{display:flex;flex-direction:column}
-  .planet,.leaf{width:140px;height:140px}
-  .vote-btns,.row{grid-template-columns:1fr}
-  header{flex-direction:column;gap:6px}
-  nav{justify-content:center}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+        .side-earth {
+            left: 0;
+            background: linear-gradient(135deg, rgba(6, 40, 29, 0.95) 0%, rgba(2, 44, 34, 0.9) 100%);
+            border-right: 1px solid rgba(16, 185, 129, 0.3);
+        }
 
-/* ===== Painel do telão (#painel) ===== */
-body.painel header,body.painel section,body.painel .hero,body.painel footer{display:none!important}
-#painel{display:none}
-body.painel #painel{display:flex;min-height:100vh;flex-direction:column;justify-content:center;padding:4vw;gap:3vh;
-  background:radial-gradient(circle at 20% 30%,rgba(46,204,113,.25),transparent 50%),radial-gradient(circle at 80% 70%,rgba(168,85,247,.3),transparent 50%),var(--bg)}
-#painel h1{text-align:center;font-size:clamp(1.6rem,4.5vw,3.4rem)}
-#painel .bar{height:clamp(70px,14vh,130px);font-size:clamp(1.4rem,4vw,3rem);margin:0}
-#painel .big{display:flex;justify-content:space-between;font-family:var(--font-title);font-size:clamp(1.2rem,3.5vw,3rem)}
-#painel .tot{text-align:center;font-family:var(--font-title);font-size:clamp(1.4rem,3.5vw,2.8rem);color:var(--space-2)}
-#painel .st{text-align:center;color:var(--muted)}
-.note{text-align:center;color:var(--muted);font-size:.85rem;margin-top:10px}
-</style>
+        .side-space {
+            right: 0;
+            background: linear-gradient(135deg, rgba(15, 10, 38, 0.95) 0%, rgba(7, 3, 20, 0.95) 100%);
+            border-left: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        /* Hover Expansion on Desktop */
+        @media (min-width: 769px) {
+            .split-container:hover .split-side:hover {
+                width: 60%;
+                z-index: 10;
+            }
+            .split-container:hover .split-side:not(:hover) {
+                width: 40%;
+                opacity: 0.7;
+            }
+        }
+
+        /* Glassmorphism card utility */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Neon Glow animations */
+        @keyframes pulse-earth {
+            0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.6); }
+        }
+
+        @keyframes pulse-space {
+            0%, 100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.6); }
+        }
+
+        .earth-pulse-active {
+            animation: pulse-earth 3s infinite ease-in-out;
+        }
+
+        .space-pulse-active {
+            animation: pulse-space 3s infinite ease-in-out;
+        }
+
+        /* Floating particles canvas background */
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-teal-500 selection:text-white overflow-x-hidden">
 
-<!-- ===== HEADER ===== -->
-<header>
-  <a class="logo" href="#escolha">DILEMA DA HUMANIDADE</a>
-  <nav>
-    <a href="#escolha">A Escolha</a>
-    <a href="#terra">Argumentos Terra</a>
-    <a href="#espaco">Argumentos Espaço</a>
-    <a href="#votacao">Votação</a>
-    <a href="#resultados">Resultados</a>
-  </nav>
-</header>
+    <!-- CANVAS PARA EFEITO DE POEIRA ESPACIAL E ELEMENTOS NATURAIS -->
+    <canvas id="particles-canvas"></canvas>
 
-<!-- ===== HERO SPLIT ===== -->
-<div class="hero" id="escolha">
-  <div class="side hero-earth">
-    <div class="leaf"></div>
-    <h2>🌍 Planeta Terra</h2>
-    <p>O único lar que conhecemos: oceanos, florestas e milhões de espécies que dependem de um equilíbrio frágil.</p>
-    <ul><li>Biodiversidade</li><li>Clima</li><li>Preservação</li></ul>
-  </div>
-  <div class="hero-center">
-    <h1>O Futuro da Humanidade: <span class="vs">Terra ou Espaço?</span></h1>
-    <p>Cuidar do que temos ou buscar um novo começo entre as estrelas? Cada escolha tem um custo. Qual valerá a pena?</p>
-    <a class="cta" href="#votacao">Quero escolher</a>
-  </div>
-  <div class="side hero-space">
-    <div class="planet"></div>
-    <h2>🚀 Espaço</h2>
-    <p>Marte, naves e novas fronteiras: a promessa de uma espécie que não coloca todos os ovos na mesma cesta.</p>
-    <ul><li>Colonização</li><li>Tecnologia</li><li>Exploração</li></ul>
-  </div>
-</div>
+    <!-- HEADER FLUTUANTE (GLASSMORPHISM) -->
+    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 py-4 px-6 md:px-12 glass-panel border-b border-slate-800/50">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo / Título -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="relative w-9 h-9 flex items-center justify-center rounded-full bg-gradient-to-tr from-emerald-500 to-purple-600 p-[2px]">
+                    <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center">
+                        <i class="fa-solid font-orbitron text-xs text-slate-200">⌘</i>
+                    </div>
+                </div>
+                <span class="font-orbitron font-bold text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-slate-100 to-purple-400 group-hover:opacity-90 transition-opacity">
+                    DILEMA<span class="text-xs text-slate-400 font-sans ml-1">HUMANO</span>
+                </span>
+            </a>
 
-<!-- ===== VOTAÇÃO ===== -->
-<section id="votacao">
-  <h2 class="sec-title">A Votação</h2>
-  <p class="vote-q">Se você tivesse o poder de decisão, para onde direcionaria os maiores recursos e esforços da humanidade?</p>
-  <div class="vote-btns">
-    <button class="vote-btn btn-earth" data-vote="terra"><span class="emoji">🌍</span>Salvar e Restaurar a Terra</button>
-    <button class="vote-btn btn-space" data-vote="espaco"><span class="emoji">🚀</span>Colonizar Outros Planetas</button>
-  </div>
-  <div class="thanks" id="thanks"></div>
-  <p class="note">Modo tablet: após cada voto a tela é liberada para o próximo visitante.</p>
-</section>
+            <!-- Navegação Desktop -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+                <a href="#hero" class="hover:text-emerald-400 transition-colors">A Escolha</a>
+                <a href="#argumentos-terra" class="hover:text-emerald-400 transition-colors">Terra</a>
+                <a href="#argumentos-espaco" class="hover:text-purple-400 transition-colors">Espaço</a>
+                <a href="#votacao" class="hover:text-amber-400 transition-colors">Votação</a>
+                <a href="#comentarios" class="hover:text-blue-400 transition-colors">Debate</a>
+            </nav>
 
-<!-- ===== RESULTADOS ===== -->
-<section id="resultados">
-  <h2 class="sec-title">Resultados</h2>
-  <div class="results">
-    <p class="locked" id="locked">Vote para revelar o resultado atual 🔒</p>
-    <div id="resBox" class="hidden">
-      <div class="bar">
-        <div class="bar-earth" id="barT">50%</div>
-        <div class="bar-space" id="barS">50%</div>
-      </div>
-      <div class="legend"><span>🌍 Terra: <b id="cT">0</b> votos</span><span>🚀 Espaço: <b id="cS">0</b> votos</span></div>
-      <div class="total">Total: <span id="total">0</span> votos</div>
-    </div>
-  </div>
-</section>
+            <!-- CTA Header -->
+            <div class="flex items-center gap-4">
+                <a href="#votacao" class="px-4 py-2 rounded-full text-xs md:text-sm font-orbitron font-semibold bg-gradient-to-r from-emerald-500 to-purple-600 hover:from-emerald-400 hover:to-purple-500 text-white shadow-lg shadow-purple-900/20 transition-all hover:scale-105 active:scale-95">
+                    VOTAR AGORA
+                </a>
+            </div>
+        </div>
+    </header>
 
-<!-- ===== ARGUMENTOS TERRA ===== -->
-<section class="args earth" id="terra">
-  <h2 class="sec-title">🌍 A Visão Terra</h2>
-  <p class="sec-sub">Antes de procurar outro mundo, cuide do único que sabemos que sustenta a vida.</p>
-  <div class="grid3">
-    <div class="card"><div class="ic">🏡</div><h3>Preservar o único lar</h3><p>Não há, até hoje, outro planeta habitável ao nosso alcance. Perder a Terra é perder tudo.</p></div>
-    <div class="card"><div class="ic">💧</div><h3>Benefício imediato</h3><p>Investir aqui ajuda bilhões de seres vivos agora: água limpa, alimento, ar puro e saúde.</p></div>
-    <div class="card"><div class="ic">🌱</div><h3>Crises climáticas e sociais</h3><p>Os recursos podem atacar desigualdade, fome e aquecimento global antes que fiquem irreversíveis.</p></div>
-  </div>
-</section>
+    <main class="relative z-10">
+        <!-- 1. HERO SECTION (SPLIT SCREEN DUALIDADE) -->
+        <section id="hero" class="split-container pt-20 md:pt-0">
+            <!-- LADO ESQUERDO: PLANETA TERRA -->
+            <div class="split-side side-earth flex flex-col justify-center px-8 md:px-16 py-12">
+                <!-- Overlay Decorativo Natureza -->
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(16,185,129,0.15),transparent_70%)] pointer-events-none"></div>
+                
+                <div class="max-w-xl mx-auto md:ml-auto md:mr-6 z-10 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 backdrop-blur-md">
+                        <i class="fa-solid fa-leaf text-emerald-400"></i> PRESERVAÇÃO & BIODIVERSIDADE
+                    </div>
+                    
+                    <h1 class="font-orbitron font-extrabold text-3xl sm:text-4xl lg:text-5xl text-emerald-100 leading-tight">
+                        Salvar Nosso <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Único Lar</span>
+                    </h1>
 
-<!-- ===== ARGUMENTOS ESPAÇO ===== -->
-<section class="args space" id="espaco">
-  <h2 class="sec-title">🚀 A Visão Espaço</h2>
-  <p class="sec-sub">Uma espécie em um só planeta vive sob risco permanente. Expandir é um seguro de vida.</p>
-  <div class="grid3">
-    <div class="card"><div class="ic">☄️</div><h3>Sobrevivência da espécie</h3><p>Asteroides, supervulcões ou guerras podem causar extinções em massa. Outros mundos nos protegem.</p></div>
-    <div class="card"><div class="ic">🔬</div><h3>Avanço tecnológico</h3><p>A corrida espacial já nos deu satélites, materiais e medicina. Novos desafios geram novas soluções.</p></div>
-    <div class="card"><div class="ic">🔭</div><h3>Horizontes ampliados</h3><p>Explorar é parte da nossa natureza. Cada fronteira vencida expande o que a humanidade pode ser.</p></div>
-  </div>
-</section>
+                    <p class="text-slate-300 text-base md:text-lg leading-relaxed">
+                        A Terra é um oásis raro no cosmos. Antes de buscar novos mundos, devemos investir todos os recursos disponíveis para curar o planeta, regenerar os ecossistemas e resolver as desigualdades da humanidade.
+                    </p>
 
-<!-- ===== COMUNIDADE ===== -->
-<section id="comunidade">
-  <h2 class="sec-title">Opinião da Comunidade</h2>
-  <p class="sec-sub">Por que você votou assim? Deixe um comentário curto.</p>
-  <div class="form">
-    <div class="row">
-      <input id="cName" placeholder="Seu nome (opcional)" maxlength="30">
-      <select id="cTag"><option value="terra">🌍 Planeta Terra</option><option value="espaco">🚀 Espaço</option></select>
-    </div>
-    <textarea id="cText" rows="3" maxlength="240" placeholder="Justifique seu voto em até 240 caracteres…"></textarea>
-    <button class="cta" id="cSend" type="button" style="border:0;cursor:pointer">Publicar comentário</button>
-  </div>
-  <div class="filters">
-    <button class="chip on" data-f="todos">Todos</button>
-    <button class="chip" data-f="terra">🌍 Planeta Terra</button>
-    <button class="chip" data-f="espaco">🚀 Espaço</button>
-  </div>
-  <div class="comments" id="comments"></div>
-</section>
+                    <div class="pt-4 flex flex-wrap gap-4">
+                        <a href="#argumentos-terra" class="px-6 py-3 rounded-lg font-medium bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/50 hover:border-emerald-400 transition-all flex items-center gap-2">
+                            Explorar Visão Terra <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-<!-- ===== FOOTER ===== -->
-<footer>
-  <blockquote>“Talvez o futuro não seja Terra ou Espaço, mas a coragem de proteger um mundo enquanto sonhamos com outros.”</blockquote>
-  <div class="social"><a href="#">Instagram</a><a href="#">X / Twitter</a><a href="#">YouTube</a><a href="#">GitHub</a></div>
-  <small>© 2026 Dilema da Humanidade. Todos os direitos reservados.</small>
-</footer>
+            <!-- LADO DIREITO: ESPAÇO & COLONIZAÇÃO -->
+            <div class="split-side side-space flex flex-col justify-center px-8 md:px-16 py-12">
+                <!-- Overlay Decorativo Espaço -->
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(168,85,247,0.15),transparent_70%)] pointer-events-none"></div>
+                
+                <div class="max-w-xl mx-auto md:mr-auto md:ml-6 z-10 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-purple-500/10 border border-purple-500/30 text-purple-300 backdrop-blur-md">
+                        <i class="fa-solid fa-rocket text-purple-400"></i> SOBREVIVÊNCIA & EXPANSÃO
+                    </div>
+                    
+                    <h1 class="font-orbitron font-extrabold text-3xl sm:text-4xl lg:text-5xl text-purple-100 leading-tight">
+                        Colonizar as <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">Estrelas</span>
+                    </h1>
 
-<!-- ===== PAINEL DO TELÃO ===== -->
-<div id="painel">
-  <h1>Terra ou Espaço? Placar ao vivo</h1>
-  <div class="big"><span>🌍 <b id="pCT">0</b></span><span><b id="pCS">0</b> 🚀</span></div>
-  <div class="bar"><div class="bar-earth" id="pBT">50%</div><div class="bar-space" id="pBS">50%</div></div>
-  <div class="tot">Total: <span id="pTot">0</span> votos</div>
-  <div class="st" id="pSt">Conectando…</div>
-</div>
+                    <p class="text-slate-300 text-base md:text-lg leading-relaxed">
+                        Colocar todos os ovos em uma única cesta planetária representa risco existencial. O futuro da consciência humana reside em tornar a humanidade uma espécie multiplanetária e explorar o cosmos.
+                    </p>
 
-<script>
-/* ===== Modo: painel do telão (#painel) ou votação (padrão) ===== */
-const isPanel = location.hash === '#painel';
-if (isPanel) document.body.classList.add('painel');
-const $ = id => document.getElementById(id);
+                    <div class="pt-4 flex flex-wrap gap-4">
+                        <a href="#argumentos-espaco" class="px-6 py-3 rounded-lg font-medium bg-purple-600/30 border border-purple-500/40 text-purple-300 hover:bg-purple-600/50 hover:border-purple-400 transition-all flex items-center gap-2">
+                            Explorar Visão Espaço <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-/* Estado local, sempre derivado do banco compartilhado (db). Começa zerado. */
-let votes = { terra:0, espaco:0 }, comments = [], filter = 'todos', myVote = null, db = null, canWrite = false;
+        <!-- 2. SEÇÃO DE VOTAÇÃO INTERATIVA -->
+        <section id="votacao" class="py-24 px-6 md:px-12 relative bg-slate-950">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center space-y-4 mb-14">
+                    <h2 class="font-orbitron text-3xl md:text-5xl font-extrabold text-white">
+                        TOME SUA DECISÃO
+                    </h2>
+                    <p class="text-slate-400 max-w-2xl mx-auto text-base md:text-lg">
+                        Se você tivesse o poder de direcionar os maiores recursos econômicos e científicos da humanidade, qual seria o foco prioritário?
+                    </p>
+                </div>
 
-/* ===== Placar: barras de porcentagem animadas ===== */
-function paint(ids){
-  const total = votes.terra + votes.espaco;
-  const pT = total ? Math.round(votes.terra / total * 100) : 50, pS = 100 - pT;
-  $(ids.bt).style.width = pT + '%'; $(ids.bt).textContent = '🌍 ' + pT + '%';
-  $(ids.bs).style.width = pS + '%'; $(ids.bs).textContent = pS + '% 🚀';
-  $(ids.ct).textContent = votes.terra.toLocaleString('pt-BR');
-  $(ids.cs).textContent = votes.espaco.toLocaleString('pt-BR');
-  $(ids.tot).textContent = total.toLocaleString('pt-BR');
-}
-const resIds = { bt:'barT', bs:'barS', ct:'cT', cs:'cS', tot:'total' };
-const panIds = { bt:'pBT', bs:'pBS', ct:'pCT', cs:'pCS', tot:'pTot' };
-function render(){ paint(isPanel ? panIds : resIds); }
+                <!-- Card de Votação Glassmorphism -->
+                <div class="glass-panel p-8 md:p-12 rounded-3xl border border-slate-800 shadow-2xl relative overflow-hidden">
+                    <!-- Status do Voto do Usuário -->
+                    <div id="vote-status-banner" class="hidden mb-8 p-4 rounded-xl text-center text-sm font-medium"></div>
 
-/* ===== CONFIGURAÇÃO DO SUPABASE (preencha após rodar o supabase-setup.sql) ===== */
-const SUPABASE_URL = 'https://wfvryvzknbzvqfrqlysn.supabase.co';      // ex.: https://abcdxyz.supabase.co
-const SUPABASE_KEY = 'sb_publishable_3uHRwplEvjjAjMHk1dYsPw_oBhcq6F8';  // chave "anon public" (pode ficar no código)
-const configured = !SUPABASE_URL.startsWith('COLE');
+                    <!-- Botões de Votação Interativos -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                        <!-- Botão Terra -->
+                        <button id="btn-vote-earth" onclick="handleVote('earth')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-emerald-950/80 to-slate-900 border-2 border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 hover:shadow-earth-glow text-left flex flex-col justify-between h-48 overflow-hidden active:scale-[0.98]">
+                            <div class="absolute -right-6 -bottom-6 text-emerald-500/10 group-hover:text-emerald-500/20 text-9xl transition-all pointer-events-none">
+                                🌍
+                            </div>
+                            <div class="flex items-center justify-between z-10">
+                                <span class="text-3xl">🌍</span>
+                                <span class="text-xs font-orbitron px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">VISÃO TERRA</span>
+                            </div>
+                            <div class="z-10">
+                                <h3 class="font-orbitron text-xl font-bold text-emerald-100 group-hover:text-emerald-300 transition-colors">Salvar e Restaurar a Terra</h3>
+                                <p class="text-xs text-slate-400 mt-1">Foco total no clima, sustentabilidade e oceanos.</p>
+                            </div>
+                        </button>
 
-/* Pequeno cliente REST (sem bibliotecas externas) */
-const H = { apikey:SUPABASE_KEY, Authorization:'Bearer ' + SUPABASE_KEY, 'Content-Type':'application/json' };
-const api = (path, opt={}) => fetch(SUPABASE_URL + '/rest/v1/' + path, { ...opt, headers:{ ...H, ...(opt.headers||{}) } });
-async function count(choice){
-  const r = await api('votes?select=id&choice=eq.' + choice, { headers:{ Prefer:'count=exact', Range:'0-0' } });
-  return parseInt((r.headers.get('content-range') || '*/0').split('/')[1], 10) || 0;
-}
+                        <!-- Botão Espaço -->
+                        <button id="btn-vote-space" onclick="handleVote('space')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-purple-950/80 to-slate-900 border-2 border-purple-500/40 hover:border-purple-400 transition-all duration-300 hover:shadow-space-glow text-left flex flex-col justify-between h-48 overflow-hidden active:scale-[0.98]">
+                            <div class="absolute -right-6 -bottom-6 text-purple-500/10 group-hover:text-purple-500/20 text-9xl transition-all pointer-events-none">
+                                🚀
+                            </div>
+                            <div class="flex items-center justify-between z-10">
+                                <span class="text-3xl">🚀</span>
+                                <span class="text-xs font-orbitron px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">VISÃO ESPAÇO</span>
+                            </div>
+                            <div class="z-10">
+                                <h3 class="font-orbitron text-xl font-bold text-purple-100 group-hover:text-purple-300 transition-colors">Colonizar Outros Planetas</h3>
+                                <p class="text-xs text-slate-400 mt-1">Expansão para Marte, Lua e exploração profunda.</p>
+                            </div>
+                        </button>
+                    </div>
 
-/* ===== Votação: cada voto é uma linha nova na tabela "votes" ===== */
-function setVoteUI(choice){
-  document.querySelectorAll('.vote-btn').forEach(b => { b.disabled = !!choice; b.classList.toggle('chosen', b.dataset.vote === choice); });
-  $('thanks').textContent = choice ? 'Voto registrado: ' + (choice === 'terra' ? '🌍 Salvar a Terra' : '🚀 Colonizar o Espaço') + '. Obrigado!' : '';
-  if (choice) $('cTag').value = choice;
-}
-document.querySelectorAll('.vote-btn').forEach(btn => btn.addEventListener('click', async () => {
-  if (myVote) return;
-  if (!configured){ $('thanks').textContent = 'Configure o Supabase no código (veja o README).'; return; }
-  myVote = btn.dataset.vote; setVoteUI(myVote);
-  try {
-    const r = await api('votes', { method:'POST', body:JSON.stringify({ choice: myVote }) });
-    if (!r.ok) throw new Error();
-    votes[myVote]++; render();                       // atualiza na hora; o polling confirma em seguida
-  } catch(e){ myVote = null; setVoteUI(null); $('thanks').textContent = 'Não foi possível registrar o voto. Tente de novo.'; return; }
-  /* Modo tablet: libera a tela para o próximo visitante após 4 segundos */
-  setTimeout(() => { myVote = null; setVoteUI(null); }, 4000);
-}));
+                    <!-- Gráfico e Estatísticas em Tempo Real -->
+                    <div class="space-y-4 pt-4 border-t border-slate-800">
+                        <div class="flex justify-between items-end font-orbitron text-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-emerald-400"></span>
+                                <span class="text-slate-300">Terra: <strong id="earth-percentage" class="text-emerald-400 text-lg">50%</strong></span>
+                            </div>
+                            <div class="text-center text-xs text-slate-400 font-sans">
+                                Total de Votos: <span id="total-votes-count" class="font-orbitron text-white font-bold">0</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-300">Espaço: <strong id="space-percentage" class="text-purple-400 text-lg">50%</strong></span>
+                                <span class="inline-block w-3 h-3 rounded-full bg-purple-400"></span>
+                            </div>
+                        </div>
 
-/* ===== Comentários ===== */
-function renderComments(){
-  const box = $('comments'); box.innerHTML = '';
-  const list = comments.filter(c => filter === 'todos' || c.tag === filter).sort((a,b) => b.ts - a.ts);
-  if (!list.length){ box.innerHTML = '<p class="locked">Nenhum comentário ainda. Seja o primeiro!</p>'; return; }
-  list.forEach(c => {
-    const t = c.tag === 'terra' ? 't' : 's';
-    const el = document.createElement('div'); el.className = 'comment ' + t;
-    const meta = document.createElement('div'); meta.className = 'meta';
-    const who = document.createElement('span'); who.textContent = c.name || 'Anônimo';
-    const tag = document.createElement('span'); tag.className = 'tag ' + t;
-    tag.textContent = c.tag === 'terra' ? '🌍 Planeta Terra' : '🚀 Espaço';
-    meta.append(who, tag);
-    const p = document.createElement('p'); p.textContent = c.text;   // textContent evita injeção de HTML
-    el.append(meta, p); box.append(el);
-  });
-}
-$('cSend').addEventListener('click', async () => {
-  const text = $('cText').value.trim();
-  if (!text){ $('cText').focus(); return; }
-  if (!configured) return;
-  try {
-    const r = await api('comments', { method:'POST', body:JSON.stringify({ name:$('cName').value.trim().slice(0,30), tag:$('cTag').value, text:text.slice(0,240) }) });
-    if (r.ok){ $('cText').value = ''; loadComments(); }
-  } catch(e){}
-});
-document.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
-  ch.classList.add('on'); filter = ch.dataset.f; renderComments();
-}));
+                        <!-- Barra de Progresso Dual -->
+                        <div class="h-6 w-full bg-slate-900 rounded-full overflow-hidden p-1 flex border border-slate-800">
+                            <div id="earth-bar" class="h-full bg-gradient-to-r from-emerald-600 to-teal-400 rounded-l-full transition-all duration-700 ease-out" style="width: 50%;"></div>
+                            <div id="space-bar" class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 rounded-r-full transition-all duration-700 ease-out" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-/* ===== Atualização periódica (quase tempo real) ===== */
-async function loadVotes(){
-  try { const [t, e] = await Promise.all([count('terra'), count('espaco')]); votes = { terra:t, espaco:e }; render(); $('pSt').textContent = '🟢 Ao vivo'; }
-  catch(err){ $('pSt').textContent = 'Sem conexão. Tentando novamente…'; }
-}
-async function loadComments(){
-  try {
-    const r = await api('comments?select=name,tag,text,created_at&order=created_at.desc&limit=50');
-    comments = (await r.json()).map(c => ({ ...c, ts: Date.parse(c.created_at) })); renderComments();
-  } catch(err){}
-}
-render(); renderComments();
-$('locked').classList.add('hidden'); $('resBox').classList.remove('hidden');   // placar sempre visível, começa em 0
-if (configured){ loadVotes(); loadComments(); setInterval(loadVotes, 3000); setInterval(loadComments, 10000); }
-else $('pSt').textContent = 'Configure o Supabase para ativar o placar.';
-</script>
+        <!-- 3. ARGUMENTOS COMPARATIVOS (DEBATES DETALHADOS) -->
+        <section class="py-20 px-6 md:px-12 bg-slate-900/60 border-y border-slate-800/80">
+            <div class="max-w-7xl mx-auto space-y-16">
+                <!-- Header da Seção -->
+                <div class="text-center space-y-3">
+                    <h2 class="font-orbitron text-3xl md:text-4xl font-bold text-white">ARGUMENTOS EM CONTRAPONTO</h2>
+                    <p class="text-slate-400 max-w-xl mx-auto">Compare as perspectivas filosóficas, econômicas e científicas de cada escolha.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Cards Visão Terra -->
+                    <div id="argumentos-terra" class="space-y-6">
+                        <div class="flex items-center gap-3 pb-3 border-b border-emerald-500/30">
+                            <i class="fa-solid fa-earth-americas text-2xl text-emerald-400"></i>
+                            <h3 class="font-orbitron text-2xl font-bold text-emerald-400">Por que focar na Terra?</h3>
+                        </div>
+
+                        <!-- Card 1 -->
+                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-emerald-500 hover:translate-x-1 transition-transform">
+                            <h4 class="font-bold text-lg text-emerald-200 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-seedling text-emerald-400"></i> O Único Biosistema Conhecido
+                            </h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                A Terra possui a complexa teia biológica de ar, água e solo perfeita para sustentação da vida. Criar ecossistemas artificiais autossustentáveis no espaço ainda é um desafio imenso e arriscado.
+                            </p>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-emerald-500 hover:translate-x-1 transition-transform">
+                            <h4 class="font-bold text-lg text-emerald-200 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-hand-holding-dollar text-emerald-400"></i> Custo-Benefício e Impacto Imediato
+                            </h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Trilhões de dólares gastos em missões espaciais podem resolver imediatamente a fome global, erradicar doenças tropicais e transicionar a matriz energética global para fontes renováveis.
+                            </p>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-emerald-500 hover:translate-x-1 transition-transform">
+                            <h4 class="font-bold text-lg text-emerald-200 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-temperature-arrow-down text-emerald-400"></i> Emergência Climática Urgente
+                            </h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                O aquecimento global e a perda de biodiversidade são ameaças do presente. Se falharmos em conter a crise climática aqui, não haverá civilização capaz de explorar o universo no futuro.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Cards Visão Espaço -->
+                    <div id="argumentos-espaco" class="space-y-6">
+                        <div class="flex items-center gap-3 pb-3 border-b border-purple-500/30">
+                            <i class="fa-solid fa-shuttle-space text-2xl text-purple-400"></i>
+                            <h3 class="font-orbitron text-2xl font-bold text-purple-400">Por que focar no Espaço?</h3>
+                        </div>
+
+                        <!-- Card 1 -->
+                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500 hover:translate-x-1 transition-transform">
+                            <h4 class="font-bold text-lg text-purple-200 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-purple-400"></i> Seguro Contra Extinção em Massa
+                            </h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Asteroides, supervulcões ou pandemias globais podem dizimar a Terra. Estabelecer colônias em Marte e na Lua garante a continuidade da consciência humana frente a cataclismos.
+                            </p>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500 hover:translate-x-1 transition-transform">
+                            <h4 class="font-bold text-lg text-purple-200 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-microchip text-purple-400"></i> Motor Tecnológico Disruptivo
+                            </h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                A exploração espacial impulsiona avanços colaterais inacreditáveis em energia solar, purificação de água, medicina robótica e materiais ultrarresistentes que beneficiam a própria Terra.
+                            </p>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500 hover:translate-x-1 transition-transform">
+                            <h4 class="font-bold text-lg text-purple-200 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-infinity text-purple-400"></i> Recursos e Expansão Ilimitados
+                            </h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                A mineração de asteroides oferece acesso quase infinito a metais raros e energia, eliminando a dependência da destruição da crosta terrestre para suprir a demanda industrial.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SEÇÃO DE DEBATE DA COMUNIDADE (COMMENT FEED) -->
+        <section id="comentarios" class="py-24 px-6 md:px-12 bg-slate-950">
+            <div class="max-w-4xl mx-auto space-y-12">
+                <div class="text-center space-y-3">
+                    <h2 class="font-orbitron text-3xl md:text-4xl font-bold text-white">OPINIÃO DA COMUNIDADE</h2>
+                    <p class="text-slate-400">Junte-se à discussão global e defenda o seu ponto de vista com responsabilidade.</p>
+                </div>
+
+                <!-- Form de Comentário -->
+                <div class="glass-panel p-6 md:p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <form id="comment-form" onsubmit="submitComment(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-orbitron text-slate-300 mb-1">Seu Nome / Apelido</label>
+                                <input type="text" id="comment-author" required placeholder="Ex: Dra. Elena Rostova" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-orbitron text-slate-300 mb-1">Sua Posição / Lado</label>
+                                <select id="comment-side" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors">
+                                    <option value="earth">🌍 Visão Terra (Preservação)</option>
+                                    <option value="space">🚀 Visão Espaço (Exploração)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-orbitron text-slate-300 mb-1">Argumento ou Opinião</label>
+                            <textarea id="comment-text" required rows="3" placeholder="Por que você acredita nessa prioridade para a humanidade?" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors resize-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full md:w-auto px-6 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-purple-600 hover:from-emerald-500 hover:to-purple-500 text-white font-orbitron text-sm font-semibold transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane text-xs"></i> PUBLICAR OPINIÃO
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Feed de Comentários -->
+                <div class="space-y-4" id="comments-container">
+                    <!-- Comentários Injetados por JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- RODAPÉ DA PÁGINA -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 py-12 px-6 md:px-12 text-center text-slate-400 text-sm">
+        <div class="max-w-6xl mx-auto space-y-6">
+            <div class="font-orbitron font-bold text-lg text-slate-200">
+                DILEMA DA HUMANIDADE
+            </div>
+            
+            <p class="max-w-xl mx-auto text-xs text-slate-400 leading-relaxed">
+                Este projeto é um espaço interativo de reflexão sobre os rumos da civilização. Quer estejamos destinados aos oceanos da Terra ou às estrelas do cosmos, a preservação do conhecimento e da empatia deve ser nossa prioridade final.
+            </p>
+
+            <div class="flex justify-center gap-6 text-slate-400 text-lg">
+                <a href="#" class="hover:text-emerald-400 transition-colors" title="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" class="hover:text-purple-400 transition-colors" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a href="#" class="hover:text-blue-400 transition-colors" title="Discord"><i class="fa-brands fa-discord"></i></a>
+            </div>
+
+            <div class="text-xs text-slate-400 border-t border-slate-900 pt-6">
+                © <span id="year-span"></span> Dilema da Humanidade. Desenvolvido para inspirar discussões éticas e científicas.
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIC & INTERACTION JAVASCRIPT -->
+    <script>
+        // Data State em Memória com Fallback no LocalStorage
+        let voteState = {
+            earth: 542,
+            space: 488,
+            userVoted: null // 'earth' | 'space' | null
+        };
+
+        // Comentários Iniciais Demonstrativos
+        let commentsState = [
+            {
+                id: 1,
+                author: "Prof. Marcos Silva",
+                side: "earth",
+                text: "Não existe um 'Planeta B' pronto para habitação imediata. A engenharia necessária para terraformar Marte levaria séculos, enquanto a degradação da Terra pode ser irreversível nas próximas décadas.",
+                date: "Há 2 horas"
+            },
+            {
+                id: 2,
+                author: "Eng. Sarah Vance",
+                side: "space",
+                text: "A exploração espacial e a preservação ambiental não se excluem. A tecnologia necessária para sobreviver em Marte nos ensinará a reciclar 100% dos recursos e viver em sintonia rigorosa com o ambiente na Terra.",
+                date: "Há 5 horas"
+            },
+            {
+                id: 3,
+                author: "Gabriel Santos",
+                side: "earth",
+                text: "Investir trilhões no espaço enquanto bilhões na Terra sofrem por falta de água potável e saneamento é uma falha moral da nossa civilização.",
+                date: "Há 1 dia"
+            }
+        ];
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('year-span').innerText = new Date().getFullYear();
+            loadLocalStorageData();
+            updateVoteUI();
+            renderComments();
+            initParticles();
+        });
+
+        // Lógica de LocalStorage para Votação e Comentários
+        function loadLocalStorageData() {
+            const savedVotes = localStorage.getItem('dilema_votes');
+            if (savedVotes) {
+                const parsed = JSON.parse(savedVotes);
+                voteState.earth = parsed.earth || voteState.earth;
+                voteState.space = parsed.space || voteState.space;
+                voteState.userVoted = parsed.userVoted || null;
+            }
+
+            const savedComments = localStorage.getItem('dilema_comments');
+            if (savedComments) {
+                commentsState = JSON.parse(savedComments);
+            }
+        }
+
+        function saveVoteData() {
+            localStorage.setItem('dilema_votes', JSON.stringify({
+                earth: voteState.earth,
+                space: voteState.space,
+                userVoted: voteState.userVoted
+            }));
+        }
+
+        function saveCommentsData() {
+            localStorage.setItem('dilema_comments', JSON.stringify(commentsState));
+        }
+
+        // Processar Voto
+        function handleVote(side) {
+            if (voteState.userVoted) {
+                showVoteBanner(`Você já registrou seu voto na <strong>${voteState.userVoted === 'earth' ? 'Visão Terra' : 'Visão Espaço'}</strong> nesta sessão.`, 'amber');
+                return;
+            }
+
+            if (side === 'earth') {
+                voteState.earth++;
+                voteState.userVoted = 'earth';
+                showVoteBanner('Voto registrado com sucesso! Você apoiou a 🌍 <strong>Restaurar a Terra</strong>.', 'emerald');
+            } else if (side === 'space') {
+                voteState.space++;
+                voteState.userVoted = 'space';
+                showVoteBanner('Voto registrado com sucesso! Você apoiou a 🚀 <strong>Colonização do Espaço</strong>.', 'purple');
+            }
+
+            saveVoteData();
+            updateVoteUI();
+        }
+
+        // Atualizar Interface de Votação
+        function updateVoteUI() {
+            const total = voteState.earth + voteState.space;
+            const earthPct = total > 0 ? Math.round((voteState.earth / total) * 100) : 50;
+            const spacePct = total > 0 ? 100 - earthPct : 50;
+
+            document.getElementById('total-votes-count').innerText = total.toLocaleString('pt-BR');
+            document.getElementById('earth-percentage').innerText = `${earthPct}%`;
+            document.getElementById('space-percentage').innerText = `${spacePct}%`;
+
+            document.getElementById('earth-bar').style.width = `${earthPct}%`;
+            document.getElementById('space-bar').style.width = `${spacePct}%`;
+
+            const btnEarth = document.getElementById('btn-vote-earth');
+            const btnSpace = document.getElementById('btn-vote-space');
+
+            if (voteState.userVoted === 'earth') {
+                btnEarth.classList.add('ring-4', 'ring-emerald-500', 'earth-pulse-active');
+                btnSpace.classList.add('opacity-60');
+            } else if (voteState.userVoted === 'space') {
+                btnSpace.classList.add('ring-4', 'ring-purple-500', 'space-pulse-active');
+                btnEarth.classList.add('opacity-60');
+            }
+        }
+
+        function showVoteBanner(msg, theme) {
+            const banner = document.getElementById('vote-status-banner');
+            banner.classList.remove('hidden', 'bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300', 'bg-purple-500/20', 'border-purple-500/40', 'text-purple-300', 'bg-amber-500/20', 'border-amber-500/40', 'text-amber-300');
+            
+            banner.classList.add('block', 'border');
+            if (theme === 'emerald') {
+                banner.classList.add('bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
+            } else if (theme === 'purple') {
+                banner.classList.add('bg-purple-500/20', 'border-purple-500/40', 'text-purple-300');
+            } else {
+                banner.classList.add('bg-amber-500/20', 'border-amber-500/40', 'text-amber-300');
+            }
+            
+            banner.innerHTML = msg;
+        }
+
+        // Submeter Novo Comentário
+        function submitComment(e) {
+            e.preventDefault();
+            const authorInput = document.getElementById('comment-author');
+            const sideInput = document.getElementById('comment-side');
+            const textInput = document.getElementById('comment-text');
+
+            const newComment = {
+                id: Date.now(),
+                author: authorInput.value.trim(),
+                side: sideInput.value,
+                text: textInput.value.trim(),
+                date: "Agora mesmo"
+            };
+
+            commentsState.unshift(newComment);
+            saveCommentsData();
+            renderComments();
+
+            // Limpar formulário
+            authorInput.value = '';
+            textInput.value = '';
+        }
+
+        // Renderizar Lista de Comentários
+        function renderComments() {
+            const container = document.getElementById('comments-container');
+            container.innerHTML = '';
+
+            commentsState.forEach(item => {
+                const isEarth = item.side === 'earth';
+                const badgeBg = isEarth ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+                const badgeLabel = isEarth ? '🌍 PLANETA TERRA' : '🚀 ESPAÇO';
+                const borderHover = isEarth ? 'hover:border-emerald-500/40' : 'hover:border-purple-500/40';
+
+                const commentCard = document.createElement('div');
+                commentCard.className = `glass-panel p-6 rounded-xl border border-slate-800 transition-all ${borderHover} space-y-3`;
+                commentCard.innerHTML = `
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-xs font-orbitron text-slate-300">
+                                ${item.author.charAt(0).toUpperCase()}
+                            </div>
+                            <span class="font-bold text-sm text-slate-200">${escapeHtml(item.author)}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-slate-400">${item.date}</span>
+                            <span class="text-[10px] font-orbitron px-2.5 py-1 rounded-full border ${badgeBg}">${badgeLabel}</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed">${escapeHtml(item.text)}</p>
+                `;
+                container.appendChild(commentCard);
+            });
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
+        // CANVAS PARTICLES EFFECT (Poeira Estelar / Sementes Flutuantes)
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const particles = [];
+            const particleCount = 45;
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.8 + 0.5,
+                    color: Math.random() > 0.5 ? 'rgba(16, 185, 129, ' : 'rgba(168, 85, 247, ',
+                    alpha: Math.random() * 0.6 + 0.2,
+                    speedX: (Math.random() - 0.5) * 0.3,
+                    speedY: (Math.random() - 0.5) * 0.3
+                });
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+
+                    if (p.x < 0) p.x = canvas.width;
+                    if (p.x > canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = canvas.height;
+                    if (p.y > canvas.height) p.y = 0;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color + p.alpha + ')';
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        }
+    </script>
 </body>
 </html>
