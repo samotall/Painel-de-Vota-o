@@ -46,6 +46,9 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
@@ -179,13 +182,127 @@
             </nav>
 
             <!-- CTA Header -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSupabaseModal()" class="px-3 py-1.5 rounded-full text-xs font-orbitron font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-database text-emerald-400"></i> Supabase
+                </button>
                 <a href="#votacao" class="px-4 py-2 rounded-full text-xs md:text-sm font-orbitron font-semibold bg-gradient-to-r from-emerald-500 to-purple-600 hover:from-emerald-400 hover:to-purple-500 text-white shadow-lg shadow-purple-900/20 transition-all hover:scale-105 active:scale-95">
                     VOTAR AGORA
                 </a>
             </div>
         </div>
     </header>
+
+    <!-- NOTIFICAÇÃO TOAST FLUTUANTE -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 max-w-sm glass-panel p-4 rounded-xl border border-slate-700 flex items-center gap-3 shadow-2xl">
+        <div id="toast-icon" class="text-xl">ℹ️</div>
+        <div id="toast-message" class="text-xs text-slate-200">Notificação aqui</div>
+    </div>
+
+    <!-- MODAL CONFIGURAÇÃO SUPABASE & SCRIPT SQL -->
+    <div id="supabase-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-2xl w-full p-6 md:p-8 rounded-2xl border border-slate-700 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-server text-emerald-400 text-xl"></i>
+                    <h3 class="font-orbitron font-bold text-lg text-white">Conexão Supabase Database</h3>
+                </div>
+                <button onclick="toggleSupabaseModal()" class="text-slate-400 hover:text-white transition-colors text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Indicador de Status -->
+            <div id="connection-status-badge" class="p-3 rounded-lg text-xs font-semibold flex items-center justify-between bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                <span>Modo Atual: <strong id="status-mode-text">Modo Local / Fallback (Sem Supabase)</strong></span>
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+            </div>
+
+            <!-- Formulário Credenciais -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-orbitron text-slate-300 mb-1">Supabase Project URL</label>
+                    <input type="text" id="supabase-url" placeholder="https://xyzcompany.supabase.co" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-orbitron text-slate-300 mb-1">Supabase Anon Key (Public)</label>
+                    <input type="password" id="supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
+                </div>
+                <button onclick="saveSupabaseCredentials()" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-orbitron text-xs font-semibold transition-all">
+                    CONECTAR SUPABASE
+                </button>
+            </div>
+
+            <!-- Instruções SQL -->
+            <div class="space-y-3 pt-4 border-t border-slate-800">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-orbitron text-xs font-bold text-slate-200">Script SQL para Criar Tabelas (SQL Editor)</h4>
+                    <button onclick="copySQLScript()" class="text-xs px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> Copiar SQL
+                    </button>
+                </div>
+                <pre class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-[11px] font-mono text-emerald-400 overflow-x-auto max-h-40 selection:bg-slate-800">
+CREATE TABLE IF NOT EXISTS public_votes (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  first_name TEXT NOT NULL,
+  choice TEXT NOT NULL,
+  fingerprint TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public_comments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  first_name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  comment TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public_votes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Leitura publica de votos" ON public_votes FOR SELECT USING (true);
+CREATE POLICY "Inserção publica de votos" ON public_votes FOR INSERT WITH CHECK (true);
+
+ALTER TABLE public_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Leitura publica de comentários" ON public_comments FOR SELECT USING (true);
+CREATE POLICY "Inserção publica de comentários" ON public_comments FOR INSERT WITH CHECK (true);</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMAÇÃO DE VOTO COM NOME -->
+    <div id="vote-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-md w-full p-6 md:p-8 rounded-2xl border border-slate-700 shadow-2xl space-y-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span id="vote-modal-icon" class="text-2xl">🌍</span>
+                    <h3 id="vote-modal-title" class="font-orbitron font-bold text-lg text-white">Confirmar Voto</h3>
+                </div>
+                <button onclick="closeVoteModal()" class="text-slate-400 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Para evitar votos duplicados e garantir a integridade da enquete sem registrar dados pessoais sensíveis, informe seu primeiro nome.
+            </p>
+
+            <form onsubmit="confirmVote(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-orbitron text-slate-300 mb-1">Seu Primeiro Nome <span class="text-emerald-400">*</span></label>
+                    <input type="text" id="voter-first-name" required placeholder="Ex: Lucas, Mariana, Arthur" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
+
+                <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-cat text-emerald-400 text-sm"></i>
+                    <span>🔒 NENHUM dado sensível (como IP, e-mail ou documento) é coletado.</span>
+                </div>
+
+                <button type="submit" id="btn-confirm-vote-submit" class="w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg active:scale-95 bg-emerald-600 hover:bg-emerald-500">
+                    CONFIRMAR MEU VOTO
+                </button>
+            </form>
+        </div>
+    </div>
 
     <main class="relative z-10">
         <!-- 1. HERO SECTION (SPLIT SCREEN DUALIDADE) -->
@@ -263,7 +380,7 @@
                     <!-- Botões de Votação Interativos -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                         <!-- Botão Terra -->
-                        <button id="btn-vote-earth" onclick="handleVote('earth')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-emerald-950/80 to-slate-900 border-2 border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 hover:shadow-earth-glow text-left flex flex-col justify-between h-48 overflow-hidden active:scale-[0.98]">
+                        <button id="btn-vote-earth" onclick="openVoteModal('earth')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-emerald-950/80 to-slate-900 border-2 border-emerald-500/40 hover:border-emerald-400 transition-all duration-300 hover:shadow-earth-glow text-left flex flex-col justify-between h-48 overflow-hidden active:scale-[0.98]">
                             <div class="absolute -right-6 -bottom-6 text-emerald-500/10 group-hover:text-emerald-500/20 text-9xl transition-all pointer-events-none">
                                 🌍
                             </div>
@@ -278,7 +395,7 @@
                         </button>
 
                         <!-- Botão Espaço -->
-                        <button id="btn-vote-space" onclick="handleVote('space')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-purple-950/80 to-slate-900 border-2 border-purple-500/40 hover:border-purple-400 transition-all duration-300 hover:shadow-space-glow text-left flex flex-col justify-between h-48 overflow-hidden active:scale-[0.98]">
+                        <button id="btn-vote-space" onclick="openVoteModal('space')" class="group relative p-6 rounded-2xl bg-gradient-to-br from-purple-950/80 to-slate-900 border-2 border-purple-500/40 hover:border-purple-400 transition-all duration-300 hover:shadow-space-glow text-left flex flex-col justify-between h-48 overflow-hidden active:scale-[0.98]">
                             <div class="absolute -right-6 -bottom-6 text-purple-500/10 group-hover:text-purple-500/20 text-9xl transition-all pointer-events-none">
                                 🚀
                             </div>
@@ -421,10 +538,10 @@
                     <form id="comment-form" onsubmit="submitComment(event)" class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-orbitron text-slate-300 mb-1">Seu Nome / Apelido</label>
-                                <input type="text" id="comment-author" required placeholder="Ex: Dra. Elena Rostova" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
-                            </div>
-                            <div>
+                            <label class="block text-xs font-orbitron text-slate-300 mb-1">Seu Primeiro Nome</label>
+                            <input type="text" id="comment-author" required placeholder="Ex: Elena" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                        </div>
+                        <div>
                                 <label class="block text-xs font-orbitron text-slate-300 mb-1">Sua Posição / Lado</label>
                                 <select id="comment-side" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors">
                                     <option value="earth">🌍 Visão Terra (Preservação)</option>
@@ -477,97 +594,301 @@
 
     <!-- LOGIC & INTERACTION JAVASCRIPT -->
     <script>
-        // Data State em Memória com Fallback no LocalStorage
+        // CLIENTE SUPABASE E GERENCIAMENTO DE ESTADO
+        let supabaseClient = null;
+        let selectedVoteChoice = null; // 'earth' ou 'space'
+
         let voteState = {
             earth: 542,
             space: 488,
-            userVoted: null // 'earth' | 'space' | null
+            userVoted: null
         };
 
-        // Comentários Iniciais Demonstrativos
         let commentsState = [
             {
                 id: 1,
-                author: "Prof. Marcos Silva",
+                author: "Marcos",
                 side: "earth",
                 text: "Não existe um 'Planeta B' pronto para habitação imediata. A engenharia necessária para terraformar Marte levaria séculos, enquanto a degradação da Terra pode ser irreversível nas próximas décadas.",
                 date: "Há 2 horas"
             },
             {
                 id: 2,
-                author: "Eng. Sarah Vance",
+                author: "Sarah",
                 side: "space",
                 text: "A exploração espacial e a preservação ambiental não se excluem. A tecnologia necessária para sobreviver em Marte nos ensinará a reciclar 100% dos recursos e viver em sintonia rigorosa com o ambiente na Terra.",
                 date: "Há 5 horas"
-            },
-            {
-                id: 3,
-                author: "Gabriel Santos",
-                side: "earth",
-                text: "Investir trilhões no espaço enquanto bilhões na Terra sofrem por falta de água potável e saneamento é uma falha moral da nossa civilização.",
-                date: "Há 1 dia"
             }
         ];
 
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', () => {
+        // INICIALIZAÇÃO
+        document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('year-span').innerText = new Date().getFullYear();
-            loadLocalStorageData();
+            initSupabaseFromStorage();
+            await syncDataFromDatabase();
             updateVoteUI();
             renderComments();
             initParticles();
         });
 
-        // Lógica de LocalStorage para Votação e Comentários
-        function loadLocalStorageData() {
-            const savedVotes = localStorage.getItem('dilema_votes');
-            if (savedVotes) {
-                const parsed = JSON.parse(savedVotes);
-                voteState.earth = parsed.earth || voteState.earth;
-                voteState.space = parsed.space || voteState.space;
-                voteState.userVoted = parsed.userVoted || null;
+        // Efetuar Conexão com Supabase
+        function initSupabaseFromStorage() {
+            const url = localStorage.getItem('supabase_url');
+            const key = localStorage.getItem('supabase_key');
+
+            if (url && key && window.supabase) {
+                try {
+                    supabaseClient = window.supabase.createClient(url, key);
+                    document.getElementById('supabase-url').value = url;
+                    document.getElementById('supabase-key').value = key;
+                    updateSupabaseStatusUI(true);
+                } catch (err) {
+                    console.error("Erro ao inicializar Supabase:", err);
+                    updateSupabaseStatusUI(false);
+                }
+            } else {
+                updateSupabaseStatusUI(false);
             }
 
-            const savedComments = localStorage.getItem('dilema_comments');
-            if (savedComments) {
-                commentsState = JSON.parse(savedComments);
+            // Verificar se o usuário já votou neste navegador
+            const userVoteLocal = localStorage.getItem('user_vote_choice');
+            if (userVoteLocal) {
+                voteState.userVoted = userVoteLocal;
             }
         }
 
-        function saveVoteData() {
-            localStorage.setItem('dilema_votes', JSON.stringify({
-                earth: voteState.earth,
-                space: voteState.space,
-                userVoted: voteState.userVoted
-            }));
+        function updateSupabaseStatusUI(isConnected) {
+            const badge = document.getElementById('connection-status-badge');
+            const text = document.getElementById('status-mode-text');
+
+            if (isConnected) {
+                badge.className = "p-3 rounded-lg text-xs font-semibold flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 text-emerald-300";
+                text.innerText = "Conectado com Sucesso ao Banco de Dados Supabase";
+            } else {
+                badge.className = "p-3 rounded-lg text-xs font-semibold flex items-center justify-between bg-amber-500/10 border border-amber-500/30 text-amber-300";
+                text.innerText = "Modo Local / Fallback (Supabase não configurado)";
+            }
         }
 
-        function saveCommentsData() {
-            localStorage.setItem('dilema_comments', JSON.stringify(commentsState));
-        }
+        function saveSupabaseCredentials() {
+            const url = document.getElementById('supabase-url').value.trim();
+            const key = document.getElementById('supabase-key').value.trim();
 
-        // Processar Voto
-        function handleVote(side) {
-            if (voteState.userVoted) {
-                showVoteBanner(`Você já registrou seu voto na <strong>${voteState.userVoted === 'earth' ? 'Visão Terra' : 'Visão Espaço'}</strong> nesta sessão.`, 'amber');
+            if (!url || !key) {
+                showToast("Por favor, preencha a URL e a Anon Key do Supabase.", "⚠️");
                 return;
             }
 
-            if (side === 'earth') {
-                voteState.earth++;
-                voteState.userVoted = 'earth';
-                showVoteBanner('Voto registrado com sucesso! Você apoiou a 🌍 <strong>Restaurar a Terra</strong>.', 'emerald');
-            } else if (side === 'space') {
-                voteState.space++;
-                voteState.userVoted = 'space';
-                showVoteBanner('Voto registrado com sucesso! Você apoiou a 🚀 <strong>Colonização do Espaço</strong>.', 'purple');
-            }
+            localStorage.setItem('supabase_url', url);
+            localStorage.setItem('supabase_key', key);
 
-            saveVoteData();
-            updateVoteUI();
+            initSupabaseFromStorage();
+            syncDataFromDatabase();
+            toggleSupabaseModal();
+            showToast("Credenciais do Supabase salvas!", "⚡");
         }
 
-        // Atualizar Interface de Votação
+        // SINCRONIZAÇÃO DE DADOS (SUPABASE OU LOCAL)
+        async function syncDataFromDatabase() {
+            if (supabaseClient) {
+                try {
+                    // Buscar Contagem de Votos
+                    const { data: votesData, error: votesError } = await supabaseClient
+                        .from('public_votes')
+                        .select('choice');
+
+                    if (!votesError && votesData) {
+                        let eCount = 0;
+                        let sCount = 0;
+                        votesData.forEach(v => {
+                            if (v.choice === 'earth') eCount++;
+                            if (v.choice === 'space') sCount++;
+                        });
+                        voteState.earth = eCount;
+                        voteState.space = sCount;
+                    }
+
+                    // Buscar Comentários
+                    const { data: commentsData, error: commentsError } = await supabaseClient
+                        .from('public_comments')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (!commentsError && commentsData && commentsData.length > 0) {
+                        commentsState = commentsData.map(c => ({
+                            id: c.id,
+                            author: c.first_name,
+                            side: c.category,
+                            text: c.comment,
+                            date: new Date(c.created_at).toLocaleDateString('pt-BR')
+                        }));
+                    }
+                } catch (e) {
+                    console.warn("Falha na sincronização via Supabase, usando cache local.", e);
+                }
+            } else {
+                // Fallback LocalStorage
+                const savedVotes = localStorage.getItem('dilema_votes_fallback');
+                if (savedVotes) {
+                    const parsed = JSON.parse(savedVotes);
+                    voteState.earth = parsed.earth || voteState.earth;
+                    voteState.space = parsed.space || voteState.space;
+                }
+            }
+            updateVoteUI();
+            renderComments();
+        }
+
+        // FINGERPRINT ANÔNIMO (USER-AGENT + SCREEN + CANVAS + FIRST NAME)
+        function generateAnonymousFingerprint(firstName) {
+            const rawString = [
+                firstName.toLowerCase().trim(),
+                navigator.userAgent,
+                screen.width + "x" + screen.height,
+                new Date().getTimezoneOffset()
+            ].join('|');
+
+            let hash = 0;
+            for (let i = 0; i < rawString.length; i++) {
+                const char = rawString.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return 'fp_' + Math.abs(hash);
+        }
+
+        // FLUXO DE VOTAÇÃO COM MODAL DE NOME
+        function openVoteModal(choice) {
+            if (voteState.userVoted) {
+                showToast(`Você já votou na ${voteState.userVoted === 'earth' ? 'Visão Terra 🌍' : 'Visão Espaço 🚀'}.`, "ℹ️");
+                return;
+            }
+
+            selectedVoteChoice = choice;
+            const modal = document.getElementById('vote-modal');
+            const title = document.getElementById('vote-modal-title');
+            const icon = document.getElementById('vote-modal-icon');
+            const btnSubmit = document.getElementById('btn-confirm-vote-submit');
+
+            if (choice === 'earth') {
+                title.innerText = "Confirmar Voto: Restaurar a Terra";
+                icon.innerText = "🌍";
+                btnSubmit.className = "w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg active:scale-95 bg-emerald-600 hover:bg-emerald-500";
+            } else {
+                title.innerText = "Confirmar Voto: Colonizar o Espaço";
+                icon.innerText = "🚀";
+                btnSubmit.className = "w-full py-3 rounded-lg font-orbitron text-xs font-bold text-white transition-all shadow-lg active:scale-95 bg-purple-600 hover:bg-purple-500";
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeVoteModal() {
+            document.getElementById('vote-modal').classList.add('hidden');
+        }
+
+        async function confirmVote(e) {
+            e.preventDefault();
+            const firstNameInput = document.getElementById('voter-first-name');
+            const firstName = firstNameInput.value.trim();
+
+            if (!firstName) {
+                showToast("Por favor, digite seu primeiro nome.", "⚠️");
+                return;
+            }
+
+            const fingerprint = generateAnonymousFingerprint(firstName);
+
+            if (supabaseClient) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('public_votes')
+                        .insert([
+                            {
+                                first_name: firstName,
+                                choice: selectedVoteChoice,
+                                fingerprint: fingerprint
+                            }
+                        ]);
+
+                    if (error) {
+                        if (error.code === '23505') { // Postgres Unique Constraint Error
+                            showToast("Um voto já foi registrado para este perfil/navegador.", "⚠️");
+                            closeVoteModal();
+                            return;
+                        }
+                        console.error("Erro no Supabase ao votar:", error);
+                    }
+                } catch (err) {
+                    console.error("Erro inesperado no Supabase:", err);
+                }
+            }
+
+            // Atualização Local
+            if (selectedVoteChoice === 'earth') {
+                voteState.earth++;
+            } else {
+                voteState.space++;
+            }
+
+            voteState.userVoted = selectedVoteChoice;
+            localStorage.setItem('user_vote_choice', selectedVoteChoice);
+            localStorage.setItem('dilema_votes_fallback', JSON.stringify({
+                earth: voteState.earth,
+                space: voteState.space
+            }));
+
+            closeVoteModal();
+            updateVoteUI();
+            showToast(`Voto registrado com sucesso para ${firstName}!`, "🎉");
+        }
+
+        // SUBMETER COMENTÁRIO (SUPABASE / LOCAL)
+        async function submitComment(e) {
+            e.preventDefault();
+            const authorInput = document.getElementById('comment-author');
+            const sideInput = document.getElementById('comment-side');
+            const textInput = document.getElementById('comment-text');
+
+            const firstName = authorInput.value.trim();
+            const category = sideInput.value;
+            const text = textInput.value.trim();
+
+            if (!firstName || !text) return;
+
+            if (supabaseClient) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('public_comments')
+                        .insert([
+                            {
+                                first_name: firstName,
+                                category: category,
+                                comment: text
+                            }
+                        ]);
+
+                    if (error) console.error("Erro ao publicar comentário no Supabase:", error);
+                } catch (err) {
+                    console.error("Falha ao salvar no Supabase:", err);
+                }
+            }
+
+            // Atualizar UI Localmente
+            commentsState.unshift({
+                id: Date.now(),
+                author: firstName,
+                side: category,
+                text: text,
+                date: "Agora mesmo"
+            });
+
+            textInput.value = '';
+            renderComments();
+            showToast("Opinião publicada com sucesso!", "💬");
+        }
+
+        // ATUALIZAR INTERFACE
         function updateVoteUI() {
             const total = voteState.earth + voteState.space;
             const earthPct = total > 0 ? Math.round((voteState.earth / total) * 100) : 50;
@@ -592,47 +913,6 @@
             }
         }
 
-        function showVoteBanner(msg, theme) {
-            const banner = document.getElementById('vote-status-banner');
-            banner.classList.remove('hidden', 'bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300', 'bg-purple-500/20', 'border-purple-500/40', 'text-purple-300', 'bg-amber-500/20', 'border-amber-500/40', 'text-amber-300');
-            
-            banner.classList.add('block', 'border');
-            if (theme === 'emerald') {
-                banner.classList.add('bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
-            } else if (theme === 'purple') {
-                banner.classList.add('bg-purple-500/20', 'border-purple-500/40', 'text-purple-300');
-            } else {
-                banner.classList.add('bg-amber-500/20', 'border-amber-500/40', 'text-amber-300');
-            }
-            
-            banner.innerHTML = msg;
-        }
-
-        // Submeter Novo Comentário
-        function submitComment(e) {
-            e.preventDefault();
-            const authorInput = document.getElementById('comment-author');
-            const sideInput = document.getElementById('comment-side');
-            const textInput = document.getElementById('comment-text');
-
-            const newComment = {
-                id: Date.now(),
-                author: authorInput.value.trim(),
-                side: sideInput.value,
-                text: textInput.value.trim(),
-                date: "Agora mesmo"
-            };
-
-            commentsState.unshift(newComment);
-            saveCommentsData();
-            renderComments();
-
-            // Limpar formulário
-            authorInput.value = '';
-            textInput.value = '';
-        }
-
-        // Renderizar Lista de Comentários
         function renderComments() {
             const container = document.getElementById('comments-container');
             container.innerHTML = '';
@@ -649,7 +929,7 @@
                     <div class="flex items-center justify-between flex-wrap gap-2">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-xs font-orbitron text-slate-300">
-                                ${item.author.charAt(0).toUpperCase()}
+                                ${escapeHtml(item.author).charAt(0).toUpperCase()}
                             </div>
                             <span class="font-bold text-sm text-slate-200">${escapeHtml(item.author)}</span>
                         </div>
@@ -664,8 +944,60 @@
             });
         }
 
+        // UTILITÁRIOS: MODAIS E TOASTS
+        function toggleSupabaseModal() {
+            const modal = document.getElementById('supabase-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function copySQLScript() {
+            const sqlText = `CREATE TABLE IF NOT EXISTS public_votes (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  first_name TEXT NOT NULL,
+  choice TEXT NOT NULL,
+  fingerprint TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public_comments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  first_name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  comment TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public_votes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Leitura publica de votos" ON public_votes FOR SELECT USING (true);
+CREATE POLICY "Inserção publica de votos" ON public_votes FOR INSERT WITH CHECK (true);
+
+ALTER TABLE public_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Leitura publica de comentários" ON public_comments FOR SELECT USING (true);
+CREATE POLICY "Inserção publica de comentários" ON public_comments FOR INSERT WITH CHECK (true);`;
+
+            navigator.clipboard.writeText(sqlText).then(() => {
+                showToast("Script SQL copiado com sucesso!", "📋");
+            }).catch(() => {
+                showToast("Selecione o texto e copie manualmente.", "⚠️");
+            });
+        }
+
+        function showToast(message, icon = "ℹ️") {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-icon').innerText = icon;
+            document.getElementById('toast-message').innerText = message;
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3500);
+        }
+
         function escapeHtml(text) {
-            return text.replace(/[&<>"']/g, function(m) {
+            return String(text).replace(/[&<>"']/g, function(m) {
                 return {
                     '&': '&amp;',
                     '<': '&lt;',
@@ -676,7 +1008,7 @@
             });
         }
 
-        // CANVAS PARTICLES EFFECT (Poeira Estelar / Sementes Flutuantes)
+        // CANVAS PARTICLES
         function initParticles() {
             const canvas = document.getElementById('particles-canvas');
             const ctx = canvas.getContext('2d');
@@ -705,7 +1037,6 @@
 
             function animateParticles() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-
                 particles.forEach(p => {
                     p.x += p.speedX;
                     p.y += p.speedY;
@@ -720,7 +1051,6 @@
                     ctx.fillStyle = p.color + p.alpha + ')';
                     ctx.fill();
                 });
-
                 requestAnimationFrame(animateParticles);
             }
             animateParticles();
